@@ -1,0 +1,11 @@
+framework module WebexSDK {
+  umbrella header "WebexSDK.h"
+  export *
+
+  module * { export * }
+}
+
+module WebexSDK.Swift {
+  header "WebexSDK-Swift.h"
+  requires objc
+}

@@ -1,0 +1,64 @@
+[
+  {
+    "metadataOutputVersion" : "3.0",
+    "storagePrecision" : "Float32",
+    "outputSchema" : [
+      {
+        "hasShapeFlexibility" : "0",
+        "isOptional" : "0",
+        "dataType" : "Double",
+        "formattedType" : "MultiArray (Double)",
+        "shortDescription" : "",
+        "shape" : "[]",
+        "name" : "prob",
+        "type" : "MultiArray"
+      }
+    ],
+    "version" : "PortraitNetTHU",
+    "modelParameters" : [
+
+    ],
+    "author" : "Cisco",
+    "specificationVersion" : 1,
+    "license" : "Cisco",
+    "computePrecision" : "Float16",
+    "isUpdatable" : "0",
+    "availability" : {
+      "macOS" : "10.13",
+      "tvOS" : "11.0",
+      "visionOS" : "1.0",
+      "watchOS" : "4.0",
+      "iOS" : "11.0",
+      "macCatalyst" : "11.0"
+    },
+    "modelType" : {
+      "name" : "MLModelType_neuralNetwork"
+    },
+    "inputSchema" : [
+      {
+        "height" : "224",
+        "colorspace" : "BGR",
+        "isOptional" : "0",
+        "width" : "224",
+        "isColor" : "1",
+        "formattedType" : "Image (Color 224 × 224)",
+        "hasSizeFlexibility" : "0",
+        "type" : "Image",
+        "shortDescription" : "",
+        "name" : "data"
+      }
+    ],
+    "userDefinedMetadata" : {
+
+    },
+    "generatedClassName" : "PortraitSeg",
+    "neuralNetworkLayerTypeHistogram" : {
+      "Softmax" : 1,
+      "Convolution" : 55,
+      "Deconvolution" : 3,
+      "ActivationReLU" : 50,
+      "Add" : 24
+    },
+    "method" : "predict"
+  }
+]

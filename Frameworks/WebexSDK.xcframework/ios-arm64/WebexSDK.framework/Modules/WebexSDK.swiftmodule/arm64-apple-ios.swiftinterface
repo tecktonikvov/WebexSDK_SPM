@@ -1,0 +1,3565 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)
+// swift-module-flags: -target arm64-apple-ios13.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Osize -enable-bare-slash-regex -module-name WebexSDK
+import AVFoundation
+import CoreMedia
+import Foundation
+import ImageIO
+import MobileCoreServices
+import Network
+import PushKit
+import Swift
+import SystemConfiguration
+import UCFBridge
+import UIKit
+import MobileCoreServices.UTCoreTypes
+import MobileCoreServices.UTType
+import WebKit
+@_exported import WebexSDK
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public enum AccessTokenLoginResult : Swift.String {
+  case success
+  case invalidToken
+  case tokenExpired
+  case networkError
+  case internalError
+  case unknownError
+  case fedRAMPError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public protocol Authenticator : AnyObject {
+  var authorized: Swift.Bool { get }
+  func deauthorize(completionHandler: (() -> Swift.Void)?)
+  func accessToken(completionHandler: @escaping (_ accessToken: WebexSDK.Result<Swift.String>) -> Swift.Void)
+}
+public struct JWTAuthenticationInfo {
+  public let accessToken: Swift.String
+  public let accessTokenExpirationDate: Foundation.Date
+}
+public class JWTAuthenticator : WebexSDK.Authenticator {
+  public var authorized: Swift.Bool {
+    get
+  }
+  public var expiration: Foundation.Date? {
+    get
+  }
+  public init()
+  public func authorizedWith(jwt: Swift.String, completionHandler: @escaping (_ result: WebexSDK.Result<Swift.Bool>) -> Swift.Void)
+  public func deauthorize(completionHandler: (() -> Swift.Void)?)
+  public func accessToken(completionHandler: @escaping (_ token: (WebexSDK.Result<Swift.String>)) -> Swift.Void)
+  public func refreshToken(completionHandler: @escaping (WebexSDK.Result<Swift.String>) -> Swift.Void)
+  @objc deinit
+}
+public struct OAuthTokens {
+  public let accessToken: Swift.String
+  public let accessTokenExpirationDate: Foundation.Date
+  public let refreshToken: Swift.String
+  public let refreshTokenExpirationDate: Foundation.Date
+}
+@_hasMissingDesignatedInitializers public class OAuthAuthenticator : WebexSDK.Authenticator {
+  public var authorized: Swift.Bool {
+    get
+  }
+  convenience public init(clientId: Swift.String, clientSecret: Swift.String, scope: Swift.String = "spark:all", redirectUri: Swift.String, emailId: Swift.String, isFedRAMPEnvironment: Swift.Bool = false)
+  public func authorize(parentViewController: UIKit.UIViewController, completionHandler: ((_ result: WebexSDK.OAuthResult) -> Swift.Void)?)
+  public func authorize(oauthCode: Swift.String, completionHandler: ((_ result: WebexSDK.OAuthResult) -> Swift.Void)? = nil)
+  public func accessToken(completionHandler: @escaping (_ accessToken: WebexSDK.Result<Swift.String>) -> Swift.Void)
+  public func deauthorize(completionHandler: (() -> Swift.Void)?)
+  public func getAuthorizationUrl(completionHandler: @escaping (WebexSDK.OAuthResult, Foundation.URL?) -> Swift.Void)
+  @objc deinit
+}
+public enum OAuthResult : Swift.String {
+  case success
+  case invalidEmail
+  case userNotActivated
+  case unableToDiscoverPreLoginServices
+  case networkError
+  case internalError
+  case unknownError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public class TokenAuthenticator : WebexSDK.Authenticator {
+  public var authorized: Swift.Bool {
+    get
+  }
+  public init(isFedRAMPEnvironment: Swift.Bool = false)
+  public func authorizedWith(accessToken: Swift.String, expiryInSeconds: Swift.Int?, completionHandler: @escaping (_ result: WebexSDK.AccessTokenLoginResult) -> Swift.Void)
+  public func accessToken(completionHandler: @escaping (WebexSDK.Result<Swift.String>) -> Swift.Void)
+  public func deauthorize(completionHandler: (() -> Swift.Void)?)
+  public var onTokenExpired: (() -> Swift.Void)? {
+    get
+    set
+  }
+  @objc deinit
+}
+public enum TokenLoginError : Swift.String {
+  case noError
+  case tokenExpiryMissing
+  case tokenExpired
+  case invalidToken
+  case internalError
+  case fedRAMPError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct Meeting {
+  public var meetingId: Swift.String {
+    get
+  }
+  public var seriesId: Swift.String {
+    get
+  }
+  public var organizer: Swift.String {
+    get
+  }
+  public var organizerName: Swift.String {
+    get
+  }
+  public var startTime: Foundation.Date {
+    get
+  }
+  public var endTime: Foundation.Date {
+    get
+  }
+  public var isAllDay: Swift.Bool {
+    get
+  }
+  public var isRecurring: Swift.Bool {
+    get
+  }
+  public var canJoin: Swift.Bool {
+    get
+  }
+  public var link: Swift.String {
+    get
+  }
+  public var sipUrl: Swift.String {
+    get
+  }
+  public var subject: Swift.String {
+    get
+  }
+  public var description: Swift.String {
+    get
+  }
+  public var location: Swift.String {
+    get
+  }
+  public var invitees: [WebexSDK.MeetingInvitee] {
+    get
+  }
+  public var isOngoingMeeting: Swift.Bool {
+    get
+  }
+  public var eventId: Swift.String {
+    get
+  }
+}
+public struct MeetingInvitee {
+  public var contactId: Swift.String {
+    get
+  }
+  public var displayName: Swift.String {
+    get
+  }
+  public var response: WebexSDK.InviteeResponse {
+    get
+  }
+  public var externalDomain: Swift.String {
+    get
+  }
+}
+public enum InviteeResponse : Swift.String {
+  case organizer
+  case accepted
+  case declined
+  case tentative
+  case unavailable
+  case waitingForResponse
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum CalendarMeetingEvent {
+  case created(WebexSDK.Meeting)
+  case updated(WebexSDK.Meeting)
+  case removed(Swift.String)
+}
+public enum ListCalendarMeetingsResult : Swift.String {
+  case success
+  case calendarServiceDisabled
+  case internalError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum GetCalendarMeetingByIdResult : Swift.String {
+  case success
+  case calendarServiceDisabled
+  case internalError
+  case notFound
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class CalendarMeetingClient {
+  public var onEvent: ((WebexSDK.CalendarMeetingEvent) -> Swift.Void)? {
+    get
+    set
+  }
+  public func list(fromDate: Foundation.Date?, toDate: Foundation.Date?, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Meeting]?>) -> Swift.Void)
+  public func get(meetingId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Meeting?>) -> Swift.Void)
+  public func isMoveMeetingSupported(meetingId: Swift.String) -> Swift.Bool
+  @objc deinit
+}
+public enum CreateSpaceMembershipError : Swift.String {
+  case nonModeratorCannotAddToModeratedSpace
+  case invalidSpaceId
+  case userDoesntExistInOrg
+  case externalUserNotAllowed
+  case companyPolicyPreventsMembershipCreation
+  case botCannotBeAdded
+  case botCannotBeAddedToDirectSpace
+  case teamGuestMemberNotEntitled
+  case userNotPartOfTeamOffice365
+  case userNotPartOfOrganizationOffice365
+  case failedToSetModerator
+  case failedOperationDisallowedForCommercialGuest
+  case internalError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum GetMembershipByIdError : Swift.String {
+  case internalError
+  case invalidMembershipId
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ListMembershipReadStatusError : Swift.String {
+  case internalError
+  case invalidSpaceId
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ListMembershipsError : Swift.String {
+  case invalidSpaceId
+  case invalidPersonId
+  case invalidPersonEmail
+  case internalError
+  case badRequest
+  case unauthorized
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum MembershipEvent {
+  case created(WebexSDK.Membership)
+  case deleted(WebexSDK.Membership)
+  case update(WebexSDK.Membership)
+  case messageSeen(WebexSDK.Membership, lastSeenMessage: Swift.String)
+}
+public struct Membership {
+  public var id: Swift.String?
+  public var personId: Swift.String?
+  public var personEmail: WebexSDK.EmailAddress?
+  public var spaceId: Swift.String?
+  public var isModerator: Swift.Bool?
+  public var created: Foundation.Date?
+  public var personDisplayName: Swift.String?
+  public var personOrgId: Swift.String?
+}
+@_hasMissingDesignatedInitializers public class MembershipClient {
+  public var onEvent: ((WebexSDK.MembershipEvent) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onEventWithPayload: ((WebexSDK.MembershipEvent, WebexSDK.WebexEventPayload) -> Swift.Void)? {
+    get
+    set
+  }
+  public func list(max: Swift.Int? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Membership]>) -> Swift.Void)
+  public func list(spaceId: Swift.String, max: Swift.Int? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Membership]>) -> Swift.Void)
+  public func list(spaceId: Swift.String, personId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Membership]>) -> Swift.Void)
+  public func list(spaceId: Swift.String, personEmail: WebexSDK.EmailAddress, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Membership]>) -> Swift.Void)
+  public func get(membershipId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Membership>) -> Swift.Void)
+  public func create(spaceId: Swift.String, personId: Swift.String, isModerator: Swift.Bool = false, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Membership>) -> Swift.Void)
+  public func create(spaceId: Swift.String, personEmail: WebexSDK.EmailAddress, isModerator: Swift.Bool = false, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Membership>) -> Swift.Void)
+  public func update(membershipId: Swift.String, isModerator: Swift.Bool, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Membership>) -> Swift.Void)
+  public func delete(membershipId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func listWithReadStatus(spaceId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.MembershipReadStatus]>) -> Swift.Void)
+  @objc deinit
+}
+public enum MembershipDeleteError : Swift.String {
+  case internalError
+  case invalidMembershipId
+  case spaceTypeDirect
+  case noPeople
+  case loadingError
+  case selfNotInSpace
+  case insufficientSpacePrivileges
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct MembershipReadStatus {
+  public let member: WebexSDK.Membership
+  public let lastSeenId: Swift.String?
+  public let lastSeenDate: Foundation.Date?
+}
+public enum MembershipUpdateError : Swift.String {
+  case internalError
+  case invalidMembershipId
+  case spaceIsProvisional
+  case failedToRemoveModerator
+  case insufficientSpacePrivileges
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum DeleteMessageError : Swift.String {
+  case internalError
+  case invalidMessageId
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum DownloadFileResult : Swift.String {
+  case noError
+  case unknownError
+  case internalError
+  case invalidSpaceId
+  case invalidMessageID
+  case invalidContentIndex
+  case invalidDownloadPath
+  case invalidContent
+  case blocked
+  case fileIsUnscannable
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum DownloadThumbnailResult : Swift.String {
+  case noError
+  case internalError
+  case invalidSpaceId
+  case invalidMessageID
+  case invalidContentIndex
+  case notAvailable
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum GetMessageError : Swift.String {
+  case internalError
+  case invalidMessageId
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ListMessagesError : Swift.String {
+  case internalError
+  case invalidSpaceId
+  case invalidMaxValue
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum MarkMessageReadResult : Swift.Error {
+  case internalError
+  case invalidMessageId
+  case invalidSpaceId
+  case failedToMarkMessageRead
+  case attemptedToMarkMessageReadBySender
+  case noError
+  public static func == (a: WebexSDK.MarkMessageReadResult, b: WebexSDK.MarkMessageReadResult) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MessageEvent {
+  public enum UpdateType {
+    case fileThumbnail([WebexSDK.RemoteFile])
+    case message(WebexSDK.Message)
+  }
+  case messageReceived(WebexSDK.Message)
+  case messageDeleted(Swift.String)
+  case messageUpdated(messageId: Swift.String, type: WebexSDK.MessageEvent.UpdateType)
+  case messagesUpdated([WebexSDK.Message])
+}
+public struct Message {
+  public struct Text {
+    public var plain: Swift.String? {
+      get
+    }
+    public var html: Swift.String? {
+      get
+    }
+    public var markdown: Swift.String? {
+      get
+    }
+    public static func plain(plain: Swift.String) -> WebexSDK.Message.Text
+    public static func html(html: Swift.String) -> WebexSDK.Message.Text
+    public static func markdown(markdown: Swift.String) -> WebexSDK.Message.Text
+    @available(*, deprecated, message: "Use html(html: String) instead")
+    public static func html(html: Swift.String, plain: Swift.String? = nil) -> WebexSDK.Message.Text
+    @available(*, deprecated, message: "Use markdown(markdown: String) instead")
+    public static func markdown(markdown: Swift.String, html: Swift.String, plain: Swift.String? = nil) -> WebexSDK.Message.Text
+  }
+  public var id: Swift.String? {
+    get
+  }
+  public var textAsObject: WebexSDK.Message.Text? {
+    get
+  }
+  public var spaceId: Swift.String? {
+    get
+  }
+  public var spaceType: WebexSDK.SpaceType {
+    get
+  }
+  public var personId: Swift.String?
+  public var personEmail: Swift.String?
+  public var personDisplayName: Swift.String?
+  public var toPersonId: Swift.String? {
+    get
+  }
+  public var toPersonEmail: WebexSDK.EmailAddress? {
+    get
+  }
+  public var created: Foundation.Date?
+  public var updated: Foundation.Date? {
+    get
+  }
+  public var isSelfMentioned: Swift.Bool
+  public var isAllMentioned: Swift.Bool {
+    get
+  }
+  public var mentions: [WebexSDK.Mention]? {
+    get
+  }
+  public var text: Swift.String? {
+    get
+  }
+  public var files: [WebexSDK.RemoteFile]? {
+    get
+  }
+  public var parentId: Swift.String? {
+    get
+  }
+  public var isReply: Swift.Bool {
+    get
+  }
+  public var isContentDecrypted: Swift.Bool {
+    get
+  }
+}
+public enum Mention {
+  case person(WebexSDK.MentionPos)
+  case all(WebexSDK.MentionPos)
+}
+public struct MentionPos {
+  public var id: Swift.String
+  public var start: Swift.Int?
+  public var end: Swift.Int?
+  public init(id: Swift.String, start: Swift.Int, end: Swift.Int)
+}
+public class LocalFile {
+  public class Thumbnail {
+    final public let path: Swift.String
+    final public let width: Swift.Int
+    final public let height: Swift.Int
+    final public let size: Swift.UInt64
+    final public let mime: Swift.String
+    public init?(path: Swift.String, mime: Swift.String? = nil, width: Swift.Int, height: Swift.Int)
+    @objc deinit
+  }
+  final public let path: Swift.String
+  final public let name: Swift.String
+  final public let mime: Swift.String
+  final public let size: Swift.UInt64
+  final public let progressHandler: ((Swift.Double) -> Swift.Void)?
+  final public let thumbnail: WebexSDK.LocalFile.Thumbnail?
+  public init?(path: Swift.String, name: Swift.String? = nil, mime: Swift.String? = nil, thumbnail: WebexSDK.LocalFile.Thumbnail? = nil, progressHandler: ((Swift.Double) -> Swift.Void)? = nil)
+  @objc deinit
+}
+public struct RemoteFile {
+  public struct Thumbnail {
+    public var width: Swift.Int?
+    public var height: Swift.Int?
+    public var mimeType: Swift.String?
+    public var url: Swift.String?
+  }
+  public var displayName: Swift.String?
+  public var mimeType: Swift.String?
+  public var size: Swift.UInt64?
+  public var thumbnail: WebexSDK.RemoteFile.Thumbnail?
+  public var url: Swift.String?
+  public var messageId: Swift.String?
+  public var spaceId: Swift.String?
+  public var contentIndex: Swift.Int?
+}
+extension WebexSDK.RemoteFile {
+  public init(displayName: Swift.String?, size: Swift.UInt64?, mimeType: Swift.String?, thumbnail: WebexSDK.RemoteFile.Thumbnail?, url: Swift.String?, messageId: Swift.String?, spaceId: Swift.String?, contentIndex: Swift.Int?)
+}
+extension WebexSDK.RemoteFile.Thumbnail {
+  public init(height: Swift.Int?, width: Swift.Int?, mimeType: Swift.String?, url: Swift.String?)
+}
+public enum Before {
+  case message(Swift.String)
+  case date(Foundation.Date)
+}
+@_hasMissingDesignatedInitializers public class MessageClient {
+  public var onEvent: ((WebexSDK.MessageEvent) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onEventWithPayload: ((WebexSDK.MessageEvent, WebexSDK.WebexEventPayload) -> Swift.Void)? {
+    get
+    set
+  }
+  public func list(spaceId: Swift.String, max: Swift.Int = 50, before: WebexSDK.Before? = nil, mentionedPeople: [WebexSDK.Mention]? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Message]>) -> Swift.Void)
+  public func post(_ text: WebexSDK.Message.Text? = nil, toSpace: Swift.String, mentions: [WebexSDK.Mention]? = nil, withFiles: [WebexSDK.LocalFile]?, parent: WebexSDK.Message? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Message>) -> Swift.Void)
+  public func post(_ text: WebexSDK.Message.Text? = nil, toPerson: Swift.String, withFiles: [WebexSDK.LocalFile]?, parent: WebexSDK.Message? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Message>) -> Swift.Void)
+  public func post(_ text: WebexSDK.Message.Text? = nil, toPersonEmail: WebexSDK.EmailAddress, withFiles: [WebexSDK.LocalFile]?, parent: WebexSDK.Message? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Message>) -> Swift.Void)
+  public func edit(_ text: WebexSDK.Message.Text, parent: WebexSDK.Message, mentions: [WebexSDK.Mention]? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Message>) -> Swift.Void)
+  public func markAsRead(spaceId: Swift.String, messageId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func markAsRead(spaceId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func get(messageId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Message>) -> Swift.Void)
+  public func delete(messageId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func downloadFile(_ file: WebexSDK.RemoteFile, to: Foundation.URL? = nil, progressHandler: ((Swift.Double) -> Swift.Void)? = nil, completionHandler: @escaping (WebexSDK.Result<Foundation.URL?>) -> Swift.Void)
+  public func downloadThumbnail(for file: WebexSDK.RemoteFile, to: Foundation.URL? = nil, completionHandler: @escaping (WebexSDK.Result<Foundation.URL?>) -> Swift.Void)
+  @objc deinit
+}
+public enum MessageValidationResult : Swift.String {
+  case noError
+  case unknownError
+  case emptyMessage
+  case messageTooLong
+  case unknownConversation
+  case noFileData
+  case mentionedUserDoesNotExist
+  case parentMessageDeletedByAuthor
+  case oneToOneParticipantRemovedFromCI
+  case invalidUnicodeContentInMessage
+  case parentMessageDeletedByModerator
+  case parentMessageDeletedByModeratorWhileEditing
+  case linksAreDirty
+  case provisionalSpaceConversionFailed
+  case serverError
+  case spaceError
+  case invalidFileData
+  case fileUploadFailed
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum PostMessageError : Swift.String {
+  case noError
+  case unknownError
+  case emptyMessage
+  case messageTooLong
+  case unknownConversation
+  case noFileData
+  case mentionedUserDoesNotExist
+  case parentMessageDeletedByAuthor
+  case parentMessageDeletedByModerator
+  case oneToOneParticipantRemovedFromCI
+  case invalidUnicodeContentInMessage
+  case parentMessageDeletedByModeratorWhileEditing
+  case linksAreDirty
+  case provisionalSpaceConversionFailed
+  case serverError
+  case spaceError
+  case invalidFileData
+  case fileUploadFailed
+  case fileUploadBlockedForExternals
+  case originConversationNotAvailable
+  case originMessageNotAvailable
+  case uploadRestrictedOnNetwork
+  case tooManyFiles
+  case internalError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum CreatePersonError : Swift.String {
+  case internalError
+  case invalidPayload
+  case personNotFound
+  case unauthorized
+  case badRequest
+  case forbidden
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum DeletePersonError : Swift.String {
+  case internalError
+  case personNotFound
+  case unauthorized
+  case badRequest
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ListPersonsError : Swift.String {
+  case internalError
+  case invalidPayload
+  case unauthorized
+  case badRequest
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum PersonRole : Swift.Int {
+  case userAdministrator
+  case readOnlyAdministrator
+  case deviceAdministrator
+  case fullAdministrator
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public struct Person {
+  public var id: Swift.String?
+  public var encodedId: Swift.String?
+  public var emails: [WebexSDK.EmailAddress]?
+  public var displayName: Swift.String?
+  public var avatar: Swift.String?
+  public var created: Foundation.Date?
+  public var nickName: Swift.String?
+  public var firstName: Swift.String?
+  public var lastName: Swift.String?
+  public var orgId: Swift.String?
+  public var type: Swift.String?
+  public var lastActivity: Foundation.Date?
+  public var status: Swift.String?
+  public var roles: [WebexSDK.PersonRole]
+  public var licenses: [Swift.String]
+  public var siteUrls: [Swift.String]
+}
+@_hasMissingDesignatedInitializers public class PersonClient {
+  public enum PersonGetError : Swift.String {
+    case internalError
+    case personNotFound
+    case unauthorized
+    case badRequest
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public func get(personId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Person>) -> Swift.Void)
+  public func getMe(queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Person>) -> Swift.Void)
+  public func list(email: WebexSDK.EmailAddress? = nil, displayName: Swift.String? = nil, id: Swift.String? = nil, orgId: Swift.String? = nil, max: Swift.Int? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Person]>) -> Swift.Void)
+  public func create(email: WebexSDK.EmailAddress, displayName: Swift.String? = nil, firstName: Swift.String? = nil, lastName: Swift.String? = nil, avatar: Swift.String? = nil, orgId: Swift.String? = nil, roles: [WebexSDK.PersonRole] = [], licenses: [Swift.String] = [], siteUrls: [Swift.String] = [], queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Person>) -> Swift.Void)
+  public func update(personId: Swift.String, email: WebexSDK.EmailAddress? = nil, displayName: Swift.String, firstName: Swift.String? = nil, lastName: Swift.String? = nil, avatar: Swift.String? = nil, orgId: Swift.String? = nil, roles: [WebexSDK.PersonRole] = [], licenses: [Swift.String] = [], siteUrls: [Swift.String] = [], queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Person>) -> Swift.Void)
+  public func delete(personId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func startWatchingPresences(contactIds: [Swift.String], completionHandler: @escaping (WebexSDK.Presence) -> Swift.Void) -> [WebexSDK.PresenceHandle]
+  public func startWatchingPresenceForSpaces(spaceIds: [Swift.String], completionHandler: @escaping (WebexSDK.Presence) -> Swift.Void) -> [WebexSDK.PresenceHandle]
+  public func stopWatchingPresences(presenceHandles: [WebexSDK.PresenceHandle])
+  public struct ProductCapability {
+    public var isMessagingSupported: Swift.Bool {
+      get
+    }
+    public var isCallingSupported: Swift.Bool {
+      get
+    }
+    public var isMeetingSupported: Swift.Bool {
+      get
+    }
+  }
+  public func getProductCapability() -> WebexSDK.PersonClient.ProductCapability
+  @objc deinit
+}
+public struct Presence {
+  public var spaceId: Swift.String {
+    get
+  }
+  public var contactId: Swift.String {
+    get
+  }
+  public var status: WebexSDK.PresenceStatus {
+    get
+  }
+  public var customStatus: Swift.String {
+    get
+  }
+  public var lastActiveTime: Foundation.Date {
+    get
+  }
+  public var expiresTime: Foundation.Date {
+    get
+  }
+}
+public struct PresenceHandle {
+  public var spaceId: Swift.String {
+    get
+  }
+  public var contactId: Swift.String {
+    get
+  }
+  public var handle: Foundation.NSNumber {
+    get
+  }
+  public var isValid: Swift.Bool {
+    get
+  }
+}
+public enum PresenceStatus {
+  case Unknown
+  case Pending
+  case Active
+  case Inactive
+  case Dnd
+  case Quiet
+  case Busy
+  case OutOfOffice
+  case Call
+  case Meeting
+  case Presenting
+  case CalendarItem
+  public static func == (a: WebexSDK.PresenceStatus, b: WebexSDK.PresenceStatus) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum UpdatePersonError : Swift.String {
+  case internalError
+  case personNotFound
+  case unauthorized
+  case badRequest
+  case forbidden
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum AddVirtualBackgroundError : Swift.String {
+  case internalError
+  case noError
+  case storageError
+  case fileReadError
+  case unsupportedImageType
+  case imageSizeTooBig
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ApplyVirtualBackgroundError : Swift.String {
+  case internalError
+  case noError
+  case notFound
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class AuxStream {
+  public var renderView: WebexSDK.MediaRenderView? {
+    get
+  }
+  public var person: WebexSDK.CallMembership? {
+    get
+  }
+  public var isSendingVideo: Swift.Bool
+  public var auxStreamSize: CoreMedia.CMVideoDimensions
+  public func close()
+  @objc deinit
+}
+public enum BreakoutError : Swift.String {
+  case joinBreakoutSessionFailed
+  case joinBreakoutSessionFailed_UnsupportedDevice
+  case joinBreakoutSessionFailed_NotAllowed
+  case joinBreakoutSessionFailed_CannotJoinLater
+  case returnToMainSessionFailed
+  case returnToMainSessionFailed_NotAllowed
+  case internalError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class Call : WebexSDK.WebexBroadcastCallServerProtocol {
+  @objc deinit
+  @objc public func startBroadcast()
+  @objc public func stopBroadcast()
+  @objc public func setup()
+  @objc public func sendFrame(withTimeStamp timeStamp: Foundation.NSNumber, width: Foundation.NSNumber, height: Foundation.NSNumber, data: Swift.UnsafeMutableRawPointer, length: Foundation.NSNumber)
+  @objc public func sendAudioFrame(withTimeStamp timeStamp: Foundation.NSNumber, data: Swift.UnsafeMutableRawPointer, length: Foundation.NSNumber)
+  public var callId: Swift.String?
+  public var title: Swift.String?
+  public var isCUCMCall: Swift.Bool
+  public var isWebexCallingOrWebexForBroadworks: Swift.Bool
+  public var isOnHold: Swift.Bool
+  public var isGroupCall: Swift.Bool
+  public var meetingId: Swift.String?
+  public var correlationId: Swift.String?
+  public var externalTrackingId: Swift.String?
+  public var locusUrl: Swift.String?
+  public var wxa: WebexSDK.WXA
+  public enum Direction {
+    case incoming
+    case outgoing
+    public static func == (a: WebexSDK.Call.Direction, b: WebexSDK.Call.Direction) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum RingerType {
+    case outgoing
+    case incoming
+    case busyTone
+    case reconnect
+    case notFound
+    case DTMF_0
+    case DTMF_1
+    case DTMF_2
+    case DTMF_3
+    case DTMF_4
+    case DTMF_5
+    case DTMF_6
+    case DTMF_7
+    case DTMF_8
+    case DTMF_9
+    case DTMF_A
+    case DTMF_B
+    case DTMF_C
+    case DTMF_D
+    case DTMF_STAR
+    case DTMF_POUND
+    case DTMF_FLASH
+    case PICKUP_ALERT
+    case PICKUP_BUSY_TONE
+    case CALLPARK_EXPIRE
+    case callWaiting
+    case undefined
+    public static func == (a: WebexSDK.Call.RingerType, b: WebexSDK.Call.RingerType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum DisconnectReason {
+    case localLeft
+    case localDecline
+    case localCancel
+    case remoteLeft
+    case remoteDecline
+    case remoteCancel
+    case otherConnected
+    @available(*, deprecated, message: "This event is obsolete")
+    case otherDeclined
+    case callEnded
+    case error(any Swift.Error)
+  }
+  public enum MediaChangedEvent {
+    case remoteSendingVideo(Swift.Bool)
+    case remoteSendingAudio(Swift.Bool)
+    case sendingVideo(Swift.Bool)
+    case sendingAudio(Swift.Bool)
+    case receivingVideo(Swift.Bool)
+    case receivingAudio(Swift.Bool)
+    case cameraSwitched
+    case spearkerSwitched
+    case localVideoViewSize
+    case remoteVideoViewSize
+    case remoteScreenShareViewSize
+    case receivingScreenShare(Swift.Bool)
+    case remoteSendingScreenShare(Swift.Bool)
+    case sendingScreenShare(Swift.Bool)
+    case localScreenShareViewSize
+    case activeSpeakerChangedEvent(From: WebexSDK.CallMembership?, To: WebexSDK.CallMembership?)
+  }
+  public struct Breakout {
+    public var startTime: Foundation.Date {
+      get
+    }
+    public var duration: Swift.Double? {
+      get
+    }
+    public var delay: Swift.Double? {
+      get
+    }
+    public var allowReturnToMainSession: Swift.Bool {
+      get
+    }
+    public var allowJoinLater: Swift.Bool {
+      get
+    }
+  }
+  public struct BreakoutSession {
+    public var name: Swift.String {
+      get
+    }
+    public var sessionId: Swift.String {
+      get
+    }
+    public var isAssigned: Swift.Bool {
+      get
+    }
+  }
+  public var onSessionEnabled: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var onSessionStarted: ((WebexSDK.Call.Breakout) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onBreakoutUpdated: ((WebexSDK.Call.Breakout) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onSessionJoined: ((WebexSDK.Call.BreakoutSession) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onJoinedSessionUpdated: ((WebexSDK.Call.BreakoutSession) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onJoinableSessionListUpdated: (([WebexSDK.Call.BreakoutSession]) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onHostAskingReturnToMainSession: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var onBroadcastMessageReceivedFromHost: ((Swift.String) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onSessionClosing: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var onReturnedToMainSession: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var onBreakoutErrorHappened: ((WebexSDK.BreakoutError) -> Swift.Void)? {
+    get
+    set
+  }
+  public func joinBreakoutSession(breakoutSession: WebexSDK.Call.BreakoutSession)
+  public func returnToMainSession()
+  public enum CallMembershipChangedEvent {
+    case joined(WebexSDK.CallMembership)
+    case left(WebexSDK.CallMembership)
+    case declined(WebexSDK.CallMembership)
+    case sendingVideo(WebexSDK.CallMembership)
+    case sendingAudio(WebexSDK.CallMembership)
+    case sendingScreenShare(WebexSDK.CallMembership)
+    case waiting(WebexSDK.CallMembership, WebexSDK.Call.WaitReason)
+    case audioMutedControlled(WebexSDK.CallMembership)
+  }
+  public enum iOSBroadcastingEvent {
+    case extensionConnected
+    case extensionDisconnected
+    public static func == (a: WebexSDK.Call.iOSBroadcastingEvent, b: WebexSDK.Call.iOSBroadcastingEvent) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum Capabilities {
+    case dtmf
+    public static func == (a: WebexSDK.Call.Capabilities, b: WebexSDK.Call.Capabilities) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum WaitReason {
+    case meetingNotStart
+    case waitingforAdmitting
+    public static func == (a: WebexSDK.Call.WaitReason, b: WebexSDK.Call.WaitReason) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum VideoRenderMode {
+    case fit
+    case cropFill
+    case stretchFill
+    public static func == (a: WebexSDK.Call.VideoRenderMode, b: WebexSDK.Call.VideoRenderMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum TorchMode {
+    case on
+    case off
+    case auto
+    public static func == (a: WebexSDK.Call.TorchMode, b: WebexSDK.Call.TorchMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum FlashMode {
+    case on
+    case off
+    case auto
+    public static func == (a: WebexSDK.Call.FlashMode, b: WebexSDK.Call.FlashMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public struct CameraExposureDuration {
+    public var max: Swift.UInt64
+    public var min: Swift.UInt64
+    public var current: Swift.UInt64
+  }
+  public struct CameraExposureISO {
+    public var max: Swift.Float
+    public var min: Swift.Float
+    public var current: Swift.Float
+  }
+  public struct CameraExposureTargetBias {
+    public var max: Swift.Float
+    public var min: Swift.Float
+    public var current: Swift.Float
+  }
+  @available(*, deprecated, message: "Use onStartRinger / onStopRinger combo instead")
+  public var onRinging: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var onStartRinger: ((WebexSDK.Call.RingerType) -> Swift.Void)? {
+    get
+    set
+  }
+  public func getShareConfig() -> WebexSDK.ShareConfig
+  public var onStopRinger: ((WebexSDK.Call.RingerType) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onConnected: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var onFailed: ((Swift.String) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onInfoChanged: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var onCpuHitThreshold: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var onPhotoCaptured: ((_ imageData: Foundation.Data?) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onMediaQualityInfoChanged: ((WebexSDK.MediaQualityInfo) -> Swift.Void)? {
+    get
+    set
+  }
+  public var mediaStreams: [WebexSDK.MediaStream] {
+    get
+  }
+  public var onMediaStreamAvailabilityListener: ((Swift.Bool, WebexSDK.MediaStream) -> Swift.Void)? {
+    get
+    set
+  }
+  public func setMediaStreamCategoryA(duplicate: Swift.Bool, quality: WebexSDK.MediaStreamQuality)
+  public func setMediaStreamsCategoryB(numStreams: Swift.Int, quality: WebexSDK.MediaStreamQuality)
+  public func setMediaStreamCategoryC(participantId: Swift.String, quality: WebexSDK.MediaStreamQuality)
+  public var isMediaStreamsPinningSupported: Swift.Bool {
+    get
+  }
+  public func removeMediaStreamCategoryA()
+  public func removeMediaStreamsCategoryB()
+  public func removeMediaStreamCategoryC(participantId: Swift.String)
+  public var onWaiting: ((WebexSDK.Call.WaitReason) -> Swift.Void)?
+  public var onDisconnected: ((WebexSDK.Call.DisconnectReason) -> Swift.Void)?
+  public var onCallMembershipChanged: ((WebexSDK.Call.CallMembershipChangedEvent) -> Swift.Void)?
+  public var onMediaChanged: ((WebexSDK.Call.MediaChangedEvent) -> Swift.Void)?
+  public var onCapabilitiesChanged: ((WebexSDK.Call.Capabilities) -> Swift.Void)?
+  public var oniOSBroadcastingChanged: ((WebexSDK.Call.iOSBroadcastingEvent) -> Swift.Void)?
+  public var onScheduleChanged: ((WebexSDK.Call) -> Swift.Void)? {
+    get
+    set
+  }
+  public var multiStreamObserver: (any WebexSDK.MultiStreamObserver)?
+  public var status: WebexSDK.CallStatus {
+    get
+  }
+  public var direction: WebexSDK.Call.Direction {
+    get
+  }
+  public var sendingDTMFEnabled: Swift.Bool
+  public var remoteSendingVideo: Swift.Bool
+  public var remoteSendingAudio: Swift.Bool
+  public var remoteSendingScreenShare: Swift.Bool
+  public var sendingVideo: Swift.Bool {
+    get
+    set
+  }
+  public var isAudioOnly: Swift.Bool {
+    get
+  }
+  public var sendingAudio: Swift.Bool {
+    get
+    set
+  }
+  public var sendingScreenShare: Swift.Bool {
+    get
+    set
+  }
+  public var receivingVideo: Swift.Bool {
+    get
+    set
+  }
+  public var receivingAudio: Swift.Bool {
+    get
+    set
+  }
+  public var receivingScreenShare: Swift.Bool {
+    get
+    set
+  }
+  public var isSpeaker: Swift.Bool {
+    get
+    set
+  }
+  public var facingMode: WebexSDK.Phone.FacingMode {
+    get
+    set
+  }
+  public var localVideoViewSize: CoreMedia.CMVideoDimensions
+  public var remoteVideoViewSize: CoreMedia.CMVideoDimensions
+  public var remoteScreenShareViewSize: CoreMedia.CMVideoDimensions
+  public var localScreenShareViewSize: CoreMedia.CMVideoDimensions
+  public var remoteVideoRenderMode: WebexSDK.Call.VideoRenderMode {
+    get
+    set
+  }
+  public var compositedVideoLayout: WebexSDK.MediaOption.CompositedVideoLayout? {
+    get
+    set
+  }
+  public func setCompositedVideoLayout(_ layout: WebexSDK.MediaOption.CompositedVideoLayout, completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public var memberships: [WebexSDK.CallMembership] {
+    get
+  }
+  public var from: WebexSDK.CallMembership? {
+    get
+  }
+  public var to: WebexSDK.CallMembership? {
+    get
+  }
+  public var spaceId: Swift.String?
+  public var schedules: [WebexSDK.CallSchedule]? {
+    get
+  }
+  public var uuid: Foundation.UUID
+  public var videoRenderViews: (local: WebexSDK.MediaRenderView?, remote: WebexSDK.MediaRenderView?) {
+    get
+    set
+  }
+  public var screenShareRenderView: WebexSDK.MediaRenderView? {
+    get
+    set
+  }
+  public var auxStreams: [WebexSDK.AuxStream] {
+    get
+  }
+  public var activeSpeaker: WebexSDK.CallMembership? {
+    get
+  }
+  public var availableAuxStreamCount: Swift.Int {
+    get
+  }
+  public var isSpaceMeeting: Swift.Bool
+  public var isSelfCreator: Swift.Bool
+  public var hasAnyoneJoined: Swift.Bool
+  public var isPmr: Swift.Bool
+  public var isMeeting: Swift.Bool
+  public var isScheduledMeeting: Swift.Bool
+  public var isVideoEnabled: Swift.Bool {
+    get
+  }
+  public var callerNumber: Swift.String? {
+    get
+  }
+  public var cameraTorchMode: WebexSDK.Call.TorchMode {
+    get
+    set
+  }
+  public var cameraFlashMode: WebexSDK.Call.FlashMode {
+    get
+    set
+  }
+  public var zoomFactor: Swift.Float {
+    get
+    set
+  }
+  public var exposureDuration: WebexSDK.Call.CameraExposureDuration {
+    get
+  }
+  public var exposureISO: WebexSDK.Call.CameraExposureISO {
+    get
+  }
+  public var exposureTargetBias: WebexSDK.Call.CameraExposureTargetBias {
+    get
+  }
+  public func setCameraFocusAtPoint(pointX: Swift.Float, pointY: Swift.Float) -> Swift.Bool
+  public func setCameraCustomExposure(duration: Swift.UInt64, iso: Swift.Float) -> Swift.Bool
+  public func setCameraAutoExposure(targetBias: Swift.Float) -> Swift.Bool
+  public func takePhoto() -> Swift.Bool
+  public enum AudioOutputMode {
+    case phone
+    case speaker
+    case bluetooth
+    case headset
+    public static func == (a: WebexSDK.Call.AudioOutputMode, b: WebexSDK.Call.AudioOutputMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public func getCurrentAudioOutput() -> WebexSDK.Call.AudioOutputMode
+  public func setAudioOutput(mode: WebexSDK.Call.AudioOutputMode, completion: (WebexSDK.Result<Swift.Bool>) -> ())
+  public func updateAudioSession()
+  public func answer(option: WebexSDK.MediaOption, completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func reject(completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func hangup(completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func letIn(_ memberships: [WebexSDK.CallMembership], completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func sendFeedbackWith(rating: Swift.Int, comments: Swift.String? = nil, includeLogs: Swift.Bool = false)
+  public func send(dtmf: Swift.String, completionHandler: (((any Swift.Error)?) -> Swift.Void)?)
+  public func startSharing(shareConfig: WebexSDK.ShareConfig? = nil, completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func stopSharing(completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func openAuxStream(view: WebexSDK.MediaRenderView)
+  public func closeAuxStream(view: WebexSDK.MediaRenderView)
+  public func setParticipantAudioMuteState(participantId: Swift.String, isMuted: Swift.Bool)
+  public func setAllParticipantAudioMuteState(doMute: Swift.Bool)
+  public func holdCall(putOnHold: Swift.Bool)
+  public func startAssociatedCall(dialNumber: Swift.String, associationType: WebexSDK.CallAssociationType, isAudioCall: Swift.Bool, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Call?>) -> Swift.Void)
+  public func transferCall(toCallId: Swift.String)
+  public func directTransferCall(toPhoneNumber: Swift.String, completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func mergeCall(targetCallId: Swift.String)
+  public func forceSendingVideoLandscape(forceLandscape: Swift.Bool, completionHandler: @escaping (Swift.Bool) -> Swift.Void)
+  public func switchToVideoCall(completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func switchToAudioCall(completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public var receivingNoiseInfo: WebexSDK.ReceivingNoiseInfo? {
+    get
+  }
+  public func enableReceivingNoiseRemoval(shouldEnable: Swift.Bool, completionHandler: @escaping (WebexSDK.ReceivingNoiseRemovalEnableResult) -> Swift.Void)
+  public var onReceivingNoiseInfoChanged: ((WebexSDK.ReceivingNoiseInfo) -> Swift.Void)? {
+    get
+    set
+  }
+  public var isClosedCaptionAllowed: Swift.Bool {
+    get
+  }
+  public var isClosedCaptionEnabled: Swift.Bool {
+    get
+  }
+  public func toggleClosedCaption(enable: Swift.Bool, completionHandler: @escaping (Swift.Bool) -> Swift.Void)
+  public func getClosedCaptionsInfo() -> WebexSDK.ClosedCaptionsInfo
+  public var onClosedCaptionsInfoChanged: ((WebexSDK.ClosedCaptionsInfo) -> Swift.Void)? {
+    get
+    set
+  }
+  public func setCurrentSpokenLanguage(language: WebexSDK.LanguageItem, completionHandler: @escaping (WebexSDK.SpokenLanguageSelectionError?) -> Swift.Void)
+  public func setCurrentTranslationLanguage(language: WebexSDK.LanguageItem, completionHandler: @escaping (WebexSDK.TranslationLanguageSelectionError?) -> Swift.Void)
+  public func getClosedCaptions() -> [WebexSDK.CaptionItem]
+  public var onClosedCaptionArrived: ((WebexSDK.CaptionItem) -> Swift.Void)? {
+    get
+    set
+  }
+  public func inviteParticipant(participant: Swift.String, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func reclaimHost(hostKey: Swift.String = "", completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func makeHost(participantId: Swift.String, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public var onMoveMeetingFailed: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public var isRecordingAudioDump: Swift.Bool {
+    get
+  }
+  public func canStartRecordingAudioDump(completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func startRecordingAudioDump(completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public func stopRecordingAudioDump(completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+}
+public enum NotificationCallType {
+  case Webex
+  case CUCM
+  public static func == (a: WebexSDK.NotificationCallType, b: WebexSDK.NotificationCallType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum CallAssociationType {
+  case Merge
+  case Transfer
+  public static func == (a: WebexSDK.CallAssociationType, b: WebexSDK.CallAssociationType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum CompanionMode {
+  case None
+  case MoveMeeting
+  public static func == (a: WebexSDK.CompanionMode, b: WebexSDK.CompanionMode) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct CaptionItem {
+  public var contactId: Swift.String {
+    get
+  }
+  public var displayName: Swift.String {
+    get
+  }
+  public var timeStamp: Swift.String {
+    get
+  }
+  public var content: Swift.String {
+    get
+  }
+  public var languageCode: Swift.String {
+    get
+  }
+  public var isFinal: Swift.Bool {
+    get
+  }
+  public init(chCaptionItem: UCFBridge.CHCaptionItem)
+}
+public struct ClosedCaptionsInfo {
+  public var canChangeSpokenLanguage: Swift.Bool {
+    get
+  }
+  public var currentSpokenLanguage: WebexSDK.LanguageItem {
+    get
+  }
+  public var currentTranslationLanguage: WebexSDK.LanguageItem {
+    get
+  }
+  public var spokenLanguages: [WebexSDK.LanguageItem] {
+    get
+  }
+  public var translationLanguages: [WebexSDK.LanguageItem] {
+    get
+  }
+  public init(chClosedCaptionsInfo: UCFBridge.CHClosedCaptionsInfo)
+}
+public enum InviteParticipantError : Swift.Error {
+  case InvalidContactIdOrEmail
+  case AlreadyJoined
+  case AlreadyInvited
+  case NotAHostOrCoHost
+  case UnknownError
+  public static func == (a: WebexSDK.InviteParticipantError, b: WebexSDK.InviteParticipantError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct LanguageItem {
+  public var languageTitle: Swift.String
+  public var languageTitleInEnglish: Swift.String
+  public var languageCode: Swift.String
+  public var isSelected: Swift.Bool
+  public init(languageTitle: Swift.String, languageTitleInEnglish: Swift.String, languageCode: Swift.String, isSelected: Swift.Bool)
+}
+public enum MakeHostError : Swift.Error {
+  case InternalError
+  case NotAllowed
+  case MembershipNotFound
+  public static func == (a: WebexSDK.MakeHostError, b: WebexSDK.MakeHostError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct MediaOption {
+  public enum CompositedVideoLayout {
+    case single
+    case filmstrip
+    case grid
+    case notSupported
+    public static func == (a: WebexSDK.MediaOption.CompositedVideoLayout, b: WebexSDK.MediaOption.CompositedVideoLayout) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public static func audioOnly(companionMode: WebexSDK.CompanionMode = .None) -> WebexSDK.MediaOption
+  public static func audioVideo(local: WebexSDK.MediaRenderView?, remote: WebexSDK.MediaRenderView?, companionMode: WebexSDK.CompanionMode = .None) -> WebexSDK.MediaOption
+  public static func audioVideo(renderViews: (local: WebexSDK.MediaRenderView, remote: WebexSDK.MediaRenderView)? = nil, companionMode: WebexSDK.CompanionMode = .None) -> WebexSDK.MediaOption
+  public static func audioVideoScreenShare(video: (local: WebexSDK.MediaRenderView?, remote: WebexSDK.MediaRenderView?)? = nil, screenShare: WebexSDK.MediaRenderView? = nil, companionMode: WebexSDK.CompanionMode = .None) -> WebexSDK.MediaOption
+  public var moderator: Swift.Bool
+  public var pin: Swift.String?
+  public var captchaId: Swift.String?
+  public var captchaVerifyCode: Swift.String?
+  public var compositedVideoLayout: WebexSDK.MediaOption.CompositedVideoLayout?
+  public var companionMode: WebexSDK.CompanionMode
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) public class MediaRenderView : WebexSDK.SparkVideoLayer {
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class MediaStream {
+  public var streamType: WebexSDK.MediaStreamType {
+    get
+  }
+  public var person: WebexSDK.CallMembership {
+    get
+  }
+  public var renderView: WebexSDK.MediaRenderView? {
+    get
+    set
+  }
+  public var isPinned: Swift.Bool {
+    get
+  }
+  public var canPin: Swift.Bool {
+    get
+  }
+  public func getSize() -> CoreFoundation.CGSize
+  public func close()
+  public func setOnMediaStreamInfoChanged(listener: @escaping (WebexSDK.MediaStreamChangeEventType, WebexSDK.MediaStreamChangeEventInfo) -> Swift.Void)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class MediaStreamChangeEventInfo {
+  final public let stream: WebexSDK.MediaStream
+  final public let toMembership: WebexSDK.CallMembership
+  final public let fromMembership: WebexSDK.CallMembership
+  @objc deinit
+}
+public enum MediaStreamChangeEventType {
+  case Size
+  case Membership
+  case Video
+  case Audio
+  case PinState
+  public static func == (a: WebexSDK.MediaStreamChangeEventType, b: WebexSDK.MediaStreamChangeEventType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MediaStreamQuality {
+  case Undefined
+  case LD
+  case SD
+  case HD
+  case FHD
+  public static func == (a: WebexSDK.MediaStreamQuality, b: WebexSDK.MediaStreamQuality) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MediaStreamType {
+  case unknown
+  case Stream1
+  case Stream2
+  case Stream3
+  case Stream4
+  case Stream5
+  case Stream6
+  case Stream7
+  case Stream8
+  case Stream9
+  case Stream10
+  case Stream11
+  case Stream12
+  case Stream13
+  case Stream14
+  case Stream15
+  case Stream16
+  case Stream17
+  case Stream18
+  case Stream19
+  case Stream20
+  case Stream21
+  case Stream22
+  case Stream23
+  case Stream24
+  case Stream25
+  public static func == (a: WebexSDK.MediaStreamType, b: WebexSDK.MediaStreamType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MediaQualityInfo {
+  case Good
+  case PoorUplink
+  case PoorDownlink
+  case NetworkLost
+  case DeviceLimitation
+  case HighCpuUsage
+  public static func == (a: WebexSDK.MediaQualityInfo, b: WebexSDK.MediaQualityInfo) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum ReclaimHostError : Swift.Error {
+  case InvalidHostKey
+  case NetworkError
+  case AlreadyAHost
+  case Unknown
+  public static func == (a: WebexSDK.ReclaimHostError, b: WebexSDK.ReclaimHostError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum RecordAudioDumpResult : Swift.String {
+  case internalError
+  case notSupported
+  case noActiveCall
+  case noError
+  case notAHost
+  case dumpFolderCreationFailed
+  case alreadyNotRecording
+  case alreadyRecording
+  case userCancelled
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ShareConfig {
+  public let shareType: WebexSDK.ShareOptimizeType
+  public let enableAudio: Swift.Bool
+  public init(shareType: WebexSDK.ShareOptimizeType, enableAudio: Swift.Bool)
+}
+public enum ShareOptimizeType {
+  case Default
+  case OptimizeVideo
+  case OptimizeText
+  public static func == (a: WebexSDK.ShareOptimizeType, b: WebexSDK.ShareOptimizeType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum SpokenLanguageSelectionError {
+  case None
+  case NotAllowed
+  case UnKnown
+  public static func == (a: WebexSDK.SpokenLanguageSelectionError, b: WebexSDK.SpokenLanguageSelectionError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum SwitchToAudioVideoCallResult : Swift.String {
+  case NotSupported
+  case InternalError
+  case SwitchedToVideo
+  case SwitchedToAudio
+  case NotAllowed
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum TranslationLanguageSelectionError {
+  case None
+  case NotAllowed
+  case Unknown
+  case MeetingNotFound
+  case UnparseableRequest
+  case InvalidAttendeeId
+  case InvalidLanguageCode
+  case TooManyTranslations
+  case TooManyCalls
+  case PolicyNotSupported
+  public static func == (a: WebexSDK.TranslationLanguageSelectionError, b: WebexSDK.TranslationLanguageSelectionError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum CallError : Swift.String {
+  case registerFailure
+  case unsupportedFunction
+  case alreadyDisconnected
+  case alreadyConnected
+  case callFailure
+  case otherActiveCall
+  case callCancelled
+  case callAssociationFailed
+  case internalError
+  case callNotFound
+  case hostPinOrMeetingPasswordRequired
+  case invalidPassword
+  case invalidPasswordOrHostKey
+  case invalidApiError
+  case cannotStartInstantMeeting
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum MeetingValidationError {
+  case captchaRequired(WebexSDK.Phone.Captcha)
+  case invalidPasswordWithCaptcha(WebexSDK.Phone.Captcha)
+}
+@_hasMissingDesignatedInitializers public class CallHistoryRecord {
+  public var conversationId: Swift.String? {
+    get
+  }
+  public var displayName: Swift.String {
+    get
+  }
+  public var callDirection: WebexSDK.Call.Direction {
+    get
+  }
+  public var isMissedCall: Swift.Bool {
+    get
+  }
+  public var callbackAddress: Swift.String {
+    get
+  }
+  public var duration: Foundation.NSNumber {
+    get
+  }
+  public var joinedDuration: Foundation.NSNumber? {
+    get
+  }
+  public var startTime: Foundation.Date {
+    get
+  }
+  public var endTime: Foundation.Date {
+    get
+  }
+  public var participantCount: Foundation.NSNumber {
+    get
+  }
+  public var wasJoined: Swift.Bool {
+    get
+  }
+  public var isPhoneNumber: Swift.Bool {
+    get
+  }
+  @objc deinit
+}
+public struct CallMembership {
+  public enum State : Swift.String {
+    case idle
+    case notified
+    case joined
+    case left
+    case declined
+    case waiting
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public enum DeviceType : Swift.String {
+    case mobile
+    case desktop
+    case room
+    case unknown
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public var isInitiator: Swift.Bool {
+    get
+  }
+  public var personId: Swift.String? {
+    get
+  }
+  public var state: WebexSDK.CallMembership.State
+  public var sipUrl: Swift.String?
+  public var phoneNumber: Swift.String?
+  public var sendingVideo: Swift.Bool
+  public var sendingAudio: Swift.Bool
+  public var sendingScreenShare: Swift.Bool
+  public var isAudioMutedControlled: Swift.Bool
+  public var audioModifiedBy: Swift.String?
+  public var isActiveSpeaker: Swift.Bool
+  public let isSelf: Swift.Bool
+  public let displayName: Swift.String?
+  public let deviceType: WebexSDK.CallMembership.DeviceType?
+  public let pairedMemberships: [WebexSDK.CallMembership]
+  public let isPresenter: Swift.Bool
+  public let isCohost: Swift.Bool
+  public let isHost: Swift.Bool
+}
+@_hasMissingDesignatedInitializers public class CallSchedule : Swift.Equatable, Swift.CustomStringConvertible {
+  final public let organzier: Swift.String?
+  final public let start: Foundation.Date?
+  final public let end: Foundation.Date?
+  public var meetingId: Swift.String?
+  public var link: Swift.String?
+  public var subject: Swift.String?
+  public static func == (lhs: WebexSDK.CallSchedule, rhs: WebexSDK.CallSchedule) -> Swift.Bool
+  public var description: Swift.String {
+    get
+  }
+  @objc deinit
+}
+public enum CallStatus {
+  case initiated
+  case ringing
+  case connected
+  case disconnected
+  case waiting
+  public static func == (a: WebexSDK.CallStatus, b: WebexSDK.CallStatus) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum DirectTransferError : Swift.String {
+  case internalError
+  case notSupported
+  case noError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum FetchVirtualBackgroundError : Swift.String {
+  case internalError
+  case noError
+  case notSupported
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) public class H264LicensePrompter : UIKit.UIViewController {
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
+}
+public enum LetInError : Swift.String {
+  case internalError
+  case illegal
+  case callNotFound
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum AuxStreamChangeEvent {
+  case auxStreamOpenedEvent(WebexSDK.MediaRenderView, WebexSDK.Result<WebexSDK.AuxStream>)
+  case auxStreamPersonChangedEvent(WebexSDK.AuxStream, From: WebexSDK.CallMembership?, To: WebexSDK.CallMembership?)
+  case auxStreamSizeChangedEvent(WebexSDK.AuxStream)
+  case auxStreamSendingVideoEvent(WebexSDK.AuxStream)
+  case auxStreamClosedEvent(WebexSDK.MediaRenderView, (any Swift.Error)?)
+}
+public protocol MultiStreamObserver : AnyObject {
+  var onAuxStreamAvailable: (() -> WebexSDK.MediaRenderView?)? { get set }
+  var onAuxStreamChanged: ((WebexSDK.AuxStreamChangeEvent) -> Swift.Void)? { get set }
+  var onAuxStreamUnavailable: (() -> WebexSDK.MediaRenderView?)? { get set }
+}
+@_hasMissingDesignatedInitializers public class Phone {
+  public enum FacingMode {
+    case user
+    case environment
+    public static func == (a: WebexSDK.Phone.FacingMode, b: WebexSDK.Phone.FacingMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum H264LicenseAction {
+    case accept
+    case decline
+    case viewLicense(url: Foundation.URL)
+  }
+  public enum DefaultBandwidth : Swift.UInt32 {
+    case maxBandwidth90p
+    case maxBandwidth180p
+    case maxBandwidth360p
+    case maxBandwidth720p
+    case maxBandwidth1080p
+    case maxBandwidthSession
+    case maxBandwidthAudio
+    public init?(rawValue: Swift.UInt32)
+    public typealias RawValue = Swift.UInt32
+    public var rawValue: Swift.UInt32 {
+      get
+    }
+  }
+  public enum AdvancedSettings {
+    case videoEnableDecoderMosaic(Swift.Bool)
+    case videoMaxTxFPS(Swift.UInt)
+  }
+  public enum AudioBNRMode : Swift.UInt {
+    case LP
+    case HP
+    public init?(rawValue: Swift.UInt)
+    public typealias RawValue = Swift.UInt
+    public var rawValue: Swift.UInt {
+      get
+    }
+  }
+  public enum VideoStreamMode {
+    case composited
+    case auxiliary
+    public static func == (a: WebexSDK.Phone.VideoStreamMode, b: WebexSDK.Phone.VideoStreamMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var audioMaxRxBandwidth: Swift.UInt32 {
+    get
+    set
+  }
+  public var videoMaxRxBandwidth: Swift.UInt32 {
+    get
+    set
+  }
+  public var videoMaxTxBandwidth: Swift.UInt32 {
+    get
+    set
+  }
+  public var sharingMaxRxBandwidth: Swift.UInt32 {
+    get
+    set
+  }
+  public var audioBNREnabled: Swift.Bool {
+    get
+    set
+  }
+  public var audioBNRMode: WebexSDK.Phone.AudioBNRMode {
+    get
+    set
+  }
+  public var enableBackgroundConnection: Swift.Bool
+  public var advancedSettings: [WebexSDK.Phone.AdvancedSettings]
+  public var videoStreamMode: WebexSDK.Phone.VideoStreamMode
+  final public let defaultAdvancedSettings: [WebexSDK.Phone.AdvancedSettings]
+  public var defaultFacingMode: WebexSDK.Phone.FacingMode {
+    get
+    set
+  }
+  public var defaultLoudSpeaker: Swift.Bool
+  public var onIncoming: ((_ call: WebexSDK.Call) -> Swift.Void)? {
+    get
+    set
+  }
+  public func requestVideoCodecActivation(completionHandler: ((WebexSDK.Phone.H264LicenseAction) -> Swift.Void)? = nil)
+  public func disableVideoCodecActivation()
+  public func isH264LicenseActivated() -> Swift.Bool
+  public struct Captcha {
+    public var id: Swift.String {
+      get
+    }
+    public var imageUrl: Swift.String {
+      get
+    }
+    public var audioUrl: Swift.String {
+      get
+    }
+  }
+  public func refreshMeetingCaptcha(completionHandler: @escaping (WebexSDK.Result<WebexSDK.Phone.Captcha>) -> Swift.Void)
+  public func dial(_ address: Swift.String, option: WebexSDK.MediaOption, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Call>) -> Swift.Void)
+  public func dialPhoneNumber(_ phoneNumber: Swift.String, option: WebexSDK.MediaOption, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Call>) -> Swift.Void)
+  public func cancel()
+  public func startPreview(view: WebexSDK.MediaRenderView)
+  public func stopPreview()
+  public func setupExternalInput(callId: Swift.String, height: Swift.Int, width: Swift.Int)
+  public func sendFrameToExternalInputter(callId: Swift.String, timeStamp: Swift.Int, height: Swift.Int, width: Swift.Int, data: Swift.UnsafeMutableRawPointer, length: Swift.Int)
+  public func getCallIdFromNotificationId(notificationId: Swift.String, notificationType: WebexSDK.NotificationCallType) -> Swift.String
+  public func setPushTokens(bundleId: Swift.String, deviceId: Swift.String, deviceToken: Swift.String, voipToken: Swift.String, appId: Swift.String? = nil)
+  public func processPushNotification(message: Swift.String, completionHandler: @escaping ((any Swift.Error)?) -> Swift.Void)
+  public enum CallingType {
+    case CUCM
+    case WebexCalling
+    case WebexForBroadworks
+    case None
+    public static func == (a: WebexSDK.Phone.CallingType, b: WebexSDK.Phone.CallingType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public func getCallingType() -> WebexSDK.Phone.CallingType
+  public func getCallHistory() -> [WebexSDK.CallHistoryRecord]
+  public func getServiceUrl(serviceUrlType: WebexSDK.Phone.ServiceUrlType) -> Swift.String?
+  public enum ServiceUrlType {
+    case Metrics
+    case ClientLogs
+    case KMS
+    public static func == (a: WebexSDK.Phone.ServiceUrlType, b: WebexSDK.Phone.ServiceUrlType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public struct VirtualBackgroundThumbnail {
+    public var name: Swift.String {
+      get
+    }
+    public var thumbnail: Foundation.Data? {
+      get
+    }
+  }
+  public struct VirtualBackground {
+    public var id: Swift.String {
+      get
+    }
+    public var isActive: Swift.Bool {
+      get
+    }
+    public var type: WebexSDK.Phone.VirtualBackgroundType {
+      get
+    }
+    public var thumbnail: WebexSDK.Phone.VirtualBackgroundThumbnail {
+      get
+    }
+  }
+  public enum VirtualBackgroundType {
+    case none
+    case blur
+    case custom
+    public static func == (a: WebexSDK.Phone.VirtualBackgroundType, b: WebexSDK.Phone.VirtualBackgroundType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum VirtualBackgroundMode {
+    case preview
+    case call
+    public static func == (a: WebexSDK.Phone.VirtualBackgroundMode, b: WebexSDK.Phone.VirtualBackgroundMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public func fetchVirtualBackgrounds(completionHandler: @escaping (_ result: WebexSDK.Result<[WebexSDK.Phone.VirtualBackground]>) -> Swift.Void)
+  public var isVirtualBackgroundSupported: Swift.Bool {
+    get
+  }
+  public func addVirtualBackground(image: WebexSDK.LocalFile, completionHandler: @escaping (_ result: WebexSDK.Result<WebexSDK.Phone.VirtualBackground>) -> Swift.Void)
+  public func removeVirtualBackground(background: WebexSDK.Phone.VirtualBackground, completionHandler: @escaping (_ result: WebexSDK.Result<Swift.Bool>) -> Swift.Void)
+  public func applyVirtualBackground(background: WebexSDK.Phone.VirtualBackground, mode: WebexSDK.Phone.VirtualBackgroundMode, completionHandler: @escaping (_ result: WebexSDK.Result<Swift.Bool>) -> Swift.Void)
+  public var virtualBackgroundLimit: Swift.Int {
+    get
+    set
+  }
+  public var isRestrictedNetwork: Swift.Bool {
+    get
+  }
+  public var onRestrictedNetworkStatusChanged: ((_ status: Swift.Bool) -> Swift.Void)? {
+    get
+    set
+  }
+  public func connectPhoneServices(completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func disconnectPhoneServices(completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func updateSystemPreferredCamera(camera: WebexSDK.Camera, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func getListOfCameras() -> [WebexSDK.Camera]
+  @objc deinit
+}
+public class CameraDeviceManager {
+  public init()
+  @objc deinit
+  public var onExternalCameraDeviceConnected: ((_ camera: WebexSDK.Camera) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onExternalCameraDeviceDisconnected: (() -> Swift.Void)? {
+    get
+    set
+  }
+}
+public struct Camera {
+  public var id: Swift.String
+  public var name: Swift.String
+  public var isSelected: Swift.Bool
+  public var isDefaultCamera: Swift.Bool
+}
+public enum PhoneConnectionError : Swift.String {
+  case internalError
+  case notSupported
+  case noError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum PhoneServiceRegistrationFailureReason {
+  case Unknown
+  case None
+  case Registering
+  case WaitingForConfigFile
+  case NotStarted
+  case NoNetwork
+  case Failover
+  case Fallback
+  case RegAllFailed
+  case Shutdown
+  case LogoutReset
+  case InvalidCredentials
+  case NoCredentialsConfigured
+  case PhoneAuthenticationFailure
+  case PhoneAuthenticationRequired
+  case LineRegistrationFailure
+  case RegisteredElsewhere
+  case NoRemoteDestinationAvailable
+  case CouldNotActivateRemoteDestination
+  case NoDeviceConfigured
+  case InvalidConfig
+  case CouldNotConnect
+  case DeviceNotInService
+  case DeviceRegTimedOut
+  case DeviceRegDeviceAlreadyRegistered
+  case DeviceRegCouldNotConnect
+  case DeviceRegNoDevicesFound
+  case DeviceRegAuthenticationFailure
+  case DeviceRegSelectedDeviceNotFound
+  case DeviceRegSelectedLineNotFound
+  case DeviceRegCouldNotOpenDevice
+  case DeviceRegCouldNotOpenLine
+  case DeviceNotAuthorised
+  case TLSFailure
+  case IpModeMismatch
+  case HostResolutionFailure
+  case ServerError
+  case RequireStorageHelper
+  case DeviceConfigurationRetrievalTimedOut
+  case EdgePhoneModeNotSupported
+  case EdgeIpModeNotSupported
+  case NoHttpHelperAvailable
+  case CTIUnableToVerifyCertificate
+  case FIPSNoCertificateVerifier
+  case NoCertificateVerifier
+  case P2PHybridNotSupported
+  case DisabledByMRAPolicy
+  case DeviceMaxConnectionReached
+  case UltrasoundCapturerOccupied
+  case DirectoryLoginNotAllowed
+  public static func == (a: WebexSDK.PhoneServiceRegistrationFailureReason, b: WebexSDK.PhoneServiceRegistrationFailureReason) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum ProcessNotificationError : Swift.String {
+  case internalError
+  case emptyMessage
+  case notWebexCallingPush
+  case noError
+  case maxIncomingCallLimitReached
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ReceivingNoiseInfo {
+  public var isNoiseDetected: Swift.Bool
+  public var isNoiseRemovalEnabled: Swift.Bool
+}
+public enum ReceivingNoiseRemovalEnableResult : Swift.String {
+  case NoError
+  case NotSupported
+  case InternalError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum RemoveVirtualBackgroundError : Swift.String {
+  case internalError
+  case noError
+  case notFound
+  case storageError
+  case illegal
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum SetCompositedLayoutError : Swift.String {
+  case internalError
+  case illegal
+  case callNotFound
+  case notSupported
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct Transcription {
+  public let personName: Swift.String
+  public let personId: Swift.String
+  public let content: Swift.String
+  public let timestamp: Swift.String
+}
+public enum UCLoginFailureReason {
+  case InternalError
+  case None
+  case Unknown
+  case InvalidLifeCycleState
+  case InvalidCertRejected
+  case SSOPageLoadError
+  case SSOStartSessionError
+  case SSOUnknownError
+  case SSOCancelled
+  case SSOWebexCloudError
+  case SSOCertificateError
+  case SSOWhoAmIFailure
+  case SSOSessionExpired
+  case InvalidBrowserResponse
+  case CredentialsRequired
+  case CommonIdentityProvisioningUser
+  case ServiceDiscoveryFailure
+  case ServiceDiscoveryAuthenticationFailure
+  case ServiceDiscoveryCannotConnectToCucmServer
+  case ServiceDiscoveryNoCucmConfiguration
+  case ServiceDiscoveryNoSRVRecordsFound
+  case ServiceDiscoveryCannotConnectToEdge
+  case ServiceDiscoveryNoNetworkConnectivity
+  case ServiceDiscoveryUntrustedCertificate
+  case ServiceDiscoveryPrimaryAuthChanged
+  case ServiceDiscoveryNoUserLookup
+  case ServiceDiscoveryAuthorizationModeChanged
+  case ServiceDiscoveryHomeClusterChanged
+  case ConnectionFailedByMRAPolicy
+  case InvalidLoginCredentials
+  case TokenFailure
+  case ForcedSignOut
+  case IPCNotResponding
+  case BroadWorksDeviceFailure
+  case BroadWorksSignInFailure
+  case BroadWorksConfigDownloadFailure
+  case BroadWorksSSOCanceled
+  case BroadWorksInvalidSipUser
+  case BroadWorksSipAuthenticationError
+  case BroadWorksXsiAuthenticationError
+  public static func == (a: WebexSDK.UCLoginFailureReason, b: WebexSDK.UCLoginFailureReason) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum UCLoginServerConnectionStatus {
+  case Idle
+  case Connecting
+  case Connected
+  case Disconnected
+  case Failed
+  public static func == (a: WebexSDK.UCLoginServerConnectionStatus, b: WebexSDK.UCLoginServerConnectionStatus) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum UCSSOFailureReason {
+  case sessionExpired
+  case refreshTokenAboutToExpire
+  public static func == (a: WebexSDK.UCSSOFailureReason, b: WebexSDK.UCSSOFailureReason) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum UpdateSystemCameraResult : Swift.String {
+  case internalError
+  case notSupported
+  case noError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class WXA {
+  public var isEnabled: Swift.Bool
+  public var canControlWXA: Swift.Bool
+  public var onTranscriptionArrived: ((WebexSDK.Transcription) -> Swift.Void)? {
+    get
+    set
+  }
+  public func enableWXA(isEnabled: Swift.Bool, callback: @escaping ((Swift.Bool) -> Swift.Void))
+  @objc deinit
+}
+public enum DeleteSpaceError : Swift.String {
+  case internalError
+  case invalidSpaceId
+  case badRequest
+  case unauthorized
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ListSpaceReadStatusError : Swift.String {
+  case internalError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum SpaceType : Swift.String, Swift.Codable {
+  case direct
+  case group
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum SpaceSortType : Swift.String {
+  case byId
+  case byLastActivity
+  case byCreated
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct Space : Swift.Codable, Swift.Equatable {
+  public var id: Swift.String?
+  public var title: Swift.String?
+  public var type: WebexSDK.SpaceType?
+  public var isLocked: Swift.Bool?
+  public var lastActivityTimestamp: Foundation.Date?
+  public var created: Foundation.Date?
+  public var teamId: Swift.String?
+  public var sipAddress: Swift.String?
+  public var isExternallyOwned: Swift.Bool?
+  public init(id: Swift.String? = nil, title: Swift.String? = nil, type: WebexSDK.SpaceType? = nil, isLocked: Swift.Bool? = nil, lastActivityTimestamp: Foundation.Date? = nil, createdDate: Foundation.Date? = nil, teamId: Swift.String? = nil, sipAddress: Swift.String? = nil, isExternallyOwned: Swift.Bool? = false)
+  public static func == (a: WebexSDK.Space, b: WebexSDK.Space) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SpaceMeetingInfo {
+  public var spaceId: Swift.String?
+  public var meetingLink: Swift.String?
+  public var sipAddress: Swift.String?
+  public var meetingNumber: Swift.String?
+  public var callInTollFreeNumber: Swift.String?
+  public var callInTollNumber: Swift.String?
+}
+public struct SpaceReadStatus : Swift.Equatable {
+  public var id: Swift.String?
+  public var type: WebexSDK.SpaceType?
+  public var lastActivityDate: Foundation.Date?
+  public var lastSeenActivityDate: Foundation.Date?
+  public static func == (a: WebexSDK.SpaceReadStatus, b: WebexSDK.SpaceReadStatus) -> Swift.Bool
+}
+public enum SpaceEvent {
+  case create(WebexSDK.Space)
+  case update(WebexSDK.Space)
+  case spaceCallStarted(Swift.String)
+  case spaceCallEnded(Swift.String)
+}
+@_hasMissingDesignatedInitializers public class SpaceClient {
+  public enum SpaceClientError : Swift.String {
+    case failedToFetchSpaceMeetingInfo
+    case internalError
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public func list(teamId: Swift.String? = nil, max: Swift.Int? = nil, type: WebexSDK.SpaceType? = nil, sortBy: WebexSDK.SpaceSortType? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Space]>) -> Swift.Void)
+  public func filter(query: Swift.String, completionHandler: @escaping ((_ searchResult: [WebexSDK.Space]) -> Swift.Void))
+  public func get(spaceId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Space>) -> Swift.Void)
+  public func create(title: Swift.String, teamId: Swift.String? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Space>) -> Swift.Void)
+  public func delete(spaceId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  public func update(spaceId: Swift.String, title: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Space>) -> Swift.Void)
+  public func getMeetingInfo(spaceId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.SpaceMeetingInfo>) -> Swift.Void)
+  public func getWithReadStatus(spaceId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.SpaceReadStatus?>) -> Swift.Void)
+  public func listWithReadStatus(max: Swift.UInt, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.SpaceReadStatus]?>) -> Swift.Void)
+  public var onEvent: ((WebexSDK.SpaceEvent) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onEventWithPayload: ((WebexSDK.SpaceEvent, WebexSDK.WebexEventPayload) -> Swift.Void)? {
+    get
+    set
+  }
+  public var onSyncingSpacesStatusChanged: ((_ isSyncInProgress: Swift.Bool) -> Swift.Void)? {
+    get
+    set
+  }
+  public var isSpacesSyncCompleted: Swift.Bool {
+    get
+  }
+  public func listWithActiveCalls(queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[Swift.String]>) -> Swift.Void)
+  @objc deinit
+}
+public enum UpdateSpaceTitleError : Swift.String {
+  case internalError
+  case invalidSpaceId
+  case titleCannotBeEmpty
+  case failedToUpdateSpaceTitle
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct Team : Swift.Codable, Swift.Equatable {
+  public var id: Swift.String?
+  public var name: Swift.String?
+  public var created: Foundation.Date?
+  public var isDeleted: Swift.Bool
+  public static func == (a: WebexSDK.Team, b: WebexSDK.Team) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+@_hasMissingDesignatedInitializers public class TeamClient {
+  public enum TeamArchiveError : Swift.String {
+    case internalError
+    case teamNotFound
+    case alreadyArchived
+    case userIsNotModerator
+    case archiveFailed
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public enum TeamUpdateError : Swift.String {
+    case internalError
+    case teamNotFound
+    case invalidTeamName
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public func list(max: Swift.Int? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Team]>) -> Swift.Void)
+  public func create(name: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Team>) -> Swift.Void)
+  public func get(teamId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Team>) -> Swift.Void)
+  public func update(teamId: Swift.String, name: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Team>) -> Swift.Void)
+  public func delete(teamId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  @objc deinit
+}
+public enum TeamCreateError : Swift.String {
+  case internalError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum TeamGetError : Swift.String {
+  case internalError
+  case teamNotFound
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum TeamListError : Swift.String {
+  case internalError
+  case invalidMinMaxLimitError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum CreateTeamMembershipError : Swift.String {
+  case internalError
+  case invalidTeamId
+  case teamNotFound
+  case nonModeratorCannotAddToModeratedTeam
+  case userDoesntExistInOrg
+  case externalUserNotAllowed
+  case companyPolicyPreventsMembershipCreation
+  case botCannotBeAdded
+  case botCannotBeAddedToDirectSpace
+  case teamGuestMemberNotEntitled
+  case userNotPartOfTeamOffice365
+  case userNotPartOfOrganizationOffice365
+  case failedToSetModerator
+  case failedOperationDisallowedForCommercialGuest
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum DeleteTeamMembershipError : Swift.String {
+  case internalError
+  case invalidTeamMembershipId
+  case teamNotFound
+  case spaceTypeDirect
+  case noPeople
+  case loadingError
+  case selfNotInTeam
+  case insufficientTeamPrivileges
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum GetTeamMembershipError : Swift.String {
+  case internalError
+  case invalidTeamMembershipId
+  case teamNotFound
+  case badRequest
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ListTeamMembershipError : Swift.String {
+  case internalError
+  case teamNotFound
+  case badRequest
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct TeamMembership {
+  public var id: Swift.String?
+  public var teamId: Swift.String?
+  public var personId: Swift.String?
+  public var personEmail: WebexSDK.EmailAddress?
+  public var personDisplayName: Swift.String?
+  public var isModerator: Swift.Bool?
+  public var created: Foundation.Date?
+  public var personOrgId: Swift.String?
+}
+@_hasMissingDesignatedInitializers public class TeamMembershipClient {
+  public func list(teamId: Swift.String, max: Swift.Int? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.TeamMembership]>) -> Swift.Void)
+  public func create(teamId: Swift.String, personId: Swift.String, isModerator: Swift.Bool = false, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.TeamMembership>) -> Swift.Void)
+  public func create(teamId: Swift.String, personEmail: WebexSDK.EmailAddress, isModerator: Swift.Bool = false, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.TeamMembership>) -> Swift.Void)
+  public func get(membershipId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.TeamMembership>) -> Swift.Void)
+  public func update(membershipId: Swift.String, isModerator: Swift.Bool, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.TeamMembership>) -> Swift.Void)
+  public func delete(membershipId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  @objc deinit
+}
+public enum UpdateTeamMembershipError : Swift.String {
+  case internalError
+  case invalidTeamMembershipId
+  case teamNotFound
+  case spaceIsProvisional
+  case insufficientTeamPrivileges
+  case failedToRemoveModerator
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public protocol WebexUCLoginDelegate : AnyObject {
+  func loadUCSSOView(to url: Swift.String)
+  func showUCNonSSOLoginView()
+  func onUCSSOLoginFailed(failureReason: WebexSDK.UCSSOFailureReason)
+  func onUCLoggedIn()
+  func onUCLoginFailed(failureReason: WebexSDK.UCLoginFailureReason)
+  func onUCServerConnectionStateChanged(status: WebexSDK.UCLoginServerConnectionStatus, failureReason: WebexSDK.PhoneServiceRegistrationFailureReason)
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc public class Webex : ObjectiveC.NSObject {
+  public var authenticator: (any WebexSDK.Authenticator)?
+  weak public var authDelegate: (any WebexSDK.WebexAuthDelegate)?
+  weak public var ucLoginDelegate: (any WebexSDK.WebexUCLoginDelegate)?
+  public static var version: Swift.String {
+    get
+  }
+  final public let calendarMeetings: WebexSDK.CalendarMeetingClient
+  final public let spaces: WebexSDK.SpaceClient
+  final public let teams: WebexSDK.TeamClient
+  final public let messages: WebexSDK.MessageClient
+  final public let memberships: WebexSDK.MembershipClient
+  final public let people: WebexSDK.PersonClient
+  final public let phone: WebexSDK.Phone
+  final public let teamMemberships: WebexSDK.TeamMembershipClient
+  final public let webhooks: WebexSDK.WebhookClient
+  public var logLevel: WebexSDK.LogLevel {
+    get
+    set
+  }
+  public var enableConsoleLogger: Swift.Bool {
+    get
+    set
+  }
+  public init(authenticator: any WebexSDK.Authenticator)
+  public func initialize(completionHandler: @escaping ((_ success: Swift.Bool) -> Swift.Void))
+  public var onInitialSpacesSyncCompleted: (() -> Swift.Void)? {
+    get
+    set
+  }
+  public func getLogFileUrl() -> Foundation.URL?
+  public struct VoicePushInfo {
+    public var pushId: Swift.String
+    public var externalTrackingId: Swift.String
+    public var name: Swift.String
+    public var number: Swift.String
+    public var version: Swift.String
+  }
+  public func parseVoIPPayload(payload: PushKit.PKPushPayload) -> WebexSDK.Webex.VoicePushInfo?
+  @objc deinit
+}
+extension WebexSDK.Webex {
+  public func setUCDomainServerUrl(ucDomain: Swift.String, serverUrl: Swift.String)
+  public func retryUCSSOLogin()
+  public func forceRegisterPhoneServices()
+  @available(*, deprecated, renamed: "setCallServiceCredential")
+  public func setCUCMCredential(username: Swift.String, password: Swift.String)
+  public func setCallServiceCredential(username: Swift.String, password: Swift.String)
+  public func getUCSSOLoginView(parentViewController: UIKit.UIViewController, ssoUrl: Swift.String, completionHandler: @escaping (_ success: Swift.Bool?) -> Swift.Void)
+  public func ucCancelSSOLogin()
+  public func startUCServices()
+  public func isUCLoggedIn() -> Swift.Bool
+  public func getUCServerConnectionStatus() -> WebexSDK.UCLoginServerConnectionStatus
+  public func base64Encode(resourceType: WebexSDK.ResourceType, resource: Swift.String, completionHandler: @escaping (WebexSDK.Result<Swift.String>) -> Swift.Void)
+  public func base64Decode(encodedResource: Swift.String) -> WebexSDK.Resource
+}
+extension WebexSDK.Webex : UCFBridge.OmniusServiceBridgeDelegate {
+  @objc dynamic public func omniusServiceBridge(onReLoginRequired omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol)
+  @objc dynamic public func omniusServiceBridgeShowUCSSOBrowser(_ omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol)
+  @objc dynamic public func omniusServiceBridgeHideUCSSOBrowser(_ omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol)
+  @objc dynamic public func omniusServiceBridge(_ omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol, loadUCSSOViewInBackground ssoUrl: Swift.String)
+  @objc dynamic public func omniusServiceBridgeShowUCNonSSOLoginView(_ omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol)
+  public func omniusServiceBridgeShowUCDomainUDSServerInput(_ omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol)
+  @objc dynamic public func omniusServiceBridge(_ omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol, onUCSSOLoginFailureReason: UCFBridge.CHUCSSOFailureReason)
+  @objc dynamic public func omniusServiceBridgeOnUCLogged(in omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol)
+  @objc dynamic public func omniusServiceBridge(onUCLoggedOut omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol)
+  @objc dynamic public func omniusServiceBridge(_ omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol, on onUCLoginFailureReason: UCFBridge.CHUCLoginFailureReason)
+  @objc dynamic public func omniusServiceBridge(_ omniusServiceBridge: any UCFBridge.OmniusServiceBridgeProtocol, onUCServerConnectionStateChanged status: UCFBridge.CHUCLoginServerConnectionStatus, failureReason: UCFBridge.CHPhoneServiceRegistrationFailureReason)
+}
+public protocol WebexAuthDelegate : AnyObject {
+  func onReLoginRequired()
+}
+public enum CreateWebhookError : Swift.String {
+  case internalError
+  case invalidPayload
+  case badRequest
+  case unauthorized
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum DeleteWebhookError : Swift.String {
+  case internalError
+  case webhookNotFound
+  case badRequest
+  case unauthorized
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum GetWebhookError : Swift.String {
+  case internalError
+  case webhookNotFound
+  case badRequest
+  case unauthorized
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ListWebhooksError : Swift.String {
+  case internalError
+  case badRequest
+  case unauthorized
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum UpdateWebhookError : Swift.String {
+  case internalError
+  case webhookNotFound
+  case invalidPayload
+  case badRequest
+  case unauthorized
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct Webhook {
+  public var id: Swift.String?
+  public var name: Swift.String?
+  public var targetUrl: Swift.String?
+  public var resource: Swift.String?
+  public var event: Swift.String?
+  public var filter: Swift.String?
+  public var created: Foundation.Date?
+  public var status: Swift.String?
+  public var secret: Swift.String?
+  public init()
+}
+@_hasMissingDesignatedInitializers public class WebhookClient {
+  public func list(max: Swift.Int? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<[WebexSDK.Webhook]>) -> Swift.Void)
+  public func create(name: Swift.String, targetUrl: Swift.String, resource: Swift.String, event: Swift.String, filter: Swift.String? = nil, secret: Swift.String? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Webhook>) -> Swift.Void)
+  public func get(webhookId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Webhook>) -> Swift.Void)
+  public func update(webhookId: Swift.String, name: Swift.String, targetUrl: Swift.String, secret: Swift.String? = nil, status: Swift.String? = nil, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<WebexSDK.Webhook>) -> Swift.Void)
+  public func delete(webhookId: Swift.String, queue: Dispatch.DispatchQueue? = nil, completionHandler: @escaping (WebexSDK.Result<Swift.Void>) -> Swift.Void)
+  @objc deinit
+}
+final public class Atomic<A> {
+  public init(_ value: A)
+  final public var value: A {
+    get
+  }
+  final public func mutate(_ transform: (inout A) -> Swift.Void)
+  @objc deinit
+}
+@objc public protocol BuildInfoProtocol {
+  @objc var isUnitTestBuild: Swift.Bool { get }
+  @objc var isUITestBuild: Swift.Bool { get }
+  @objc var isDebugBuild: Swift.Bool { get }
+  @objc var isDevBuild: Swift.Bool { get }
+  @objc var isAppStoreBuild: Swift.Bool { get }
+  @objc var isTestFlightBuild: Swift.Bool { get }
+  @objc var isInHouseBuild: Swift.Bool { get }
+  @objc var isDistributionBuild: Swift.Bool { get }
+  @objc var isSqbuDevBundleId: Swift.Bool { get }
+  @objc var gitRevision: Swift.String { get }
+  @objc var groupIdentifier: Swift.String { get }
+  @objc var universalLinkURLs: [Swift.String] { get }
+  @objc var onBoardingDomain: Swift.String { get }
+  @objc var supportsScreenShare: Swift.Bool { get }
+  @objc var version: Swift.String { get }
+  @objc var prettyVersion: Swift.String { get }
+  @objc var releaseVersion: Swift.String { get }
+  @objc var buildVersion: Swift.String { get }
+}
+public protocol BuildFlagsProtocol {
+  var hasDebugBuildFlag: Swift.Bool { get }
+  var hasAppStoreBuildFlag: Swift.Bool { get }
+  var hasDistributionBuildFlag: Swift.Bool { get }
+}
+public class BuildInfo : WebexSDK.BuildInfoProtocol {
+  public init(buildFlags: any WebexSDK.BuildFlagsProtocol, bundle: any WebexSDK.BundleProtocol, device: any WebexSDK.DeviceProtocol, processInfo: any WebexSDK.ProcessInfoProtocol)
+  @objc public var isUnitTestBuild: Swift.Bool {
+    @objc get
+  }
+  @objc public var isUITestBuild: Swift.Bool {
+    @objc get
+  }
+  @objc public var isDebugBuild: Swift.Bool {
+    @objc get
+  }
+  @objc public var isDevBuild: Swift.Bool {
+    @objc get
+  }
+  @objc public var isAppStoreBuild: Swift.Bool {
+    @objc get
+  }
+  @objc public var isTestFlightBuild: Swift.Bool {
+    @objc get
+  }
+  @objc public var isInHouseBuild: Swift.Bool {
+    @objc get
+  }
+  @objc public var isDistributionBuild: Swift.Bool {
+    @objc get
+  }
+  @objc public var isSqbuDevBundleId: Swift.Bool {
+    @objc get
+  }
+  @objc public var gitRevision: Swift.String {
+    @objc get
+  }
+  @objc public var groupIdentifier: Swift.String {
+    @objc get
+  }
+  @objc public var universalLinkURLs: [Swift.String] {
+    @objc get
+  }
+  @objc public var onBoardingDomain: Swift.String {
+    @objc get
+  }
+  @objc public var supportsScreenShare: Swift.Bool {
+    @objc get
+  }
+  @objc public var version: Swift.String {
+    @objc get
+  }
+  @objc public var prettyVersion: Swift.String {
+    @objc get
+  }
+  @objc public var releaseVersion: Swift.String {
+    @objc get
+  }
+  @objc public var buildVersion: Swift.String {
+    @objc get
+  }
+  @objc deinit
+}
+public protocol BundleProtocol {
+  var appStoreReceiptURL: Foundation.URL? { get }
+  var bundleIdentifier: Swift.String? { get }
+  func object(forInfoDictionaryKey key: Swift.String) -> Any?
+  func url(forResource name: Swift.String?, withExtension ext: Swift.String?) -> Foundation.URL?
+  func path(forResource name: Swift.String?, ofType ext: Swift.String?) -> Swift.String?
+}
+extension Foundation.Bundle : WebexSDK.BundleProtocol {
+}
+public protocol DeviceProtocol : AnyObject {
+  var isBatteryMonitoringEnabled: Swift.Bool { get set }
+  var batteryState: UIKit.UIDevice.BatteryState { get }
+  var batteryLevel: Swift.Float { get }
+  var name: Swift.String { get }
+  var model: Swift.String { get }
+  var localizedModel: Swift.String { get }
+  var systemName: Swift.String { get }
+  var systemVersion: Swift.String { get }
+  var userInterfaceIdiom: UIKit.UIUserInterfaceIdiom { get }
+  var identifierForVendor: Foundation.UUID? { get }
+}
+extension UIKit.UIDevice : WebexSDK.DeviceProtocol {
+}
+public protocol ExtendedDeviceProtocol : WebexSDK.DeviceProtocol {
+  var type: Swift.String { get }
+  var platformCode: Swift.String { get }
+  var platformName: Swift.String { get }
+  var isiPhone: Swift.Bool { get }
+  var isiPad: Swift.Bool { get }
+  var isSimulator: Swift.Bool { get }
+  var supportsHiResVideo: Swift.Bool { get }
+  var isiOS11: Swift.Bool { get }
+  var isiOS13: Swift.Bool { get }
+  var processorMaxFrequency: Swift.UInt32 { get }
+}
+public class ExtendedDevice : WebexSDK.ExtendedDeviceProtocol {
+  public init(device: any WebexSDK.DeviceProtocol, userDefaults: any WebexSDK.UserDefaultsProtocol)
+  public var isBatteryMonitoringEnabled: Swift.Bool {
+    get
+    set
+  }
+  public var batteryState: UIKit.UIDevice.BatteryState {
+    get
+  }
+  public var batteryLevel: Swift.Float {
+    get
+  }
+  public var name: Swift.String {
+    get
+  }
+  public var model: Swift.String {
+    get
+  }
+  public var localizedModel: Swift.String {
+    get
+  }
+  public var systemName: Swift.String {
+    get
+  }
+  public var systemVersion: Swift.String {
+    get
+  }
+  public var userInterfaceIdiom: UIKit.UIUserInterfaceIdiom {
+    get
+  }
+  public var type: Swift.String {
+    get
+  }
+  public var platformCode: Swift.String {
+    get
+  }
+  public var platformName: Swift.String {
+    get
+  }
+  public var supportsHiResVideo: Swift.Bool {
+    get
+  }
+  public var isiPhone: Swift.Bool {
+    get
+  }
+  public var isiPad: Swift.Bool {
+    get
+  }
+  public var isSimulator: Swift.Bool {
+    get
+  }
+  public var isiOS11: Swift.Bool {
+    get
+  }
+  public var isiOS13: Swift.Bool {
+    get
+  }
+  public var processorMaxFrequency: Swift.UInt32 {
+    get
+  }
+  public var identifierForVendor: Foundation.UUID? {
+    get
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class FileHelpers {
+  public static var acceptedContentPasteTypes: [Swift.String] {
+    get
+  }
+  public static func makeFileName(forPastedFileName pastedFileName: Swift.String, fileExtension: Swift.String) -> Swift.String
+  public static func generateFileName(withFileExtension fileExtension: Swift.String) -> Swift.String
+  @objc deinit
+}
+public protocol FileManagerProtocol {
+  func contentsOfDirectory(at url: Foundation.URL, includingPropertiesForKeys keys: [Foundation.URLResourceKey]?, options mask: Foundation.FileManager.DirectoryEnumerationOptions) throws -> [Foundation.URL]
+  func urls(for directory: Foundation.FileManager.SearchPathDirectory, in domainMask: Foundation.FileManager.SearchPathDomainMask) -> [Foundation.URL]
+  func contentsOfDirectory(atPath path: Swift.String) throws -> [Swift.String]
+  func moveItem(atPath srcPath: Swift.String, toPath dstPath: Swift.String) throws
+  func removeItem(at url: Foundation.URL) throws
+  func removeItem(atPath path: Swift.String) throws
+  func fileExists(atPath path: Swift.String) -> Swift.Bool
+  func fileExists(atPath path: Swift.String, isDirectory: Swift.UnsafeMutablePointer<ObjectiveC.ObjCBool>?) -> Swift.Bool
+  func isWritableFile(atPath path: Swift.String) -> Swift.Bool
+  func containerURL(forSecurityApplicationGroupIdentifier groupIdentifier: Swift.String) -> Foundation.URL?
+  func attributesOfItem(atPath path: Swift.String) throws -> [Foundation.FileAttributeKey : Any]
+  func createDirectory(at url: Foundation.URL, withIntermediateDirectories createIntermediates: Swift.Bool, attributes: [Foundation.FileAttributeKey : Any]?) throws
+  @discardableResult
+  func createFile(atPath path: Swift.String, contents data: Foundation.Data?, attributes attr: [Foundation.FileAttributeKey : Any]?) -> Swift.Bool
+  func enumerator(atPath path: Swift.String) -> Foundation.FileManager.DirectoryEnumerator?
+  func readFile(atPath path: Swift.String) throws -> Foundation.Data
+  func makeAVAsset(fromUrl url: Foundation.URL) -> AVFoundation.AVAsset
+  func clearSharedContainer(for bundle: Foundation.Bundle) throws
+}
+extension Foundation.FileManager {
+  public func readFile(atPath path: Swift.String) throws -> Foundation.Data
+  public func makeAVAsset(fromUrl url: Foundation.URL) -> AVFoundation.AVAsset
+  public func clearSharedContainer(for bundle: Foundation.Bundle) throws
+}
+extension Foundation.FileManager : WebexSDK.FileManagerProtocol {
+}
+extension WebexSDK.FileManagerProtocol {
+  public func fileSize(atPath path: Swift.String) -> Swift.Int64
+  public func pathForTemporaryThumbnailFile(_ filePath: Foundation.URL) -> Foundation.URL?
+  public func pathForTemporaryFile(_ fileName: Swift.String) -> Foundation.URL?
+  public func tempDirectory() -> Foundation.URL?
+  public func deleteCachedFile(at filePath: Swift.String) -> Swift.Bool
+  public func makeTemporaryURLForJpegImage(_ image: UIKit.UIImage, withCompression compression: CoreFoundation.CGFloat) -> Foundation.URL?
+}
+extension Swift.Bool {
+  public var stringValue: Swift.String {
+    get
+  }
+}
+public protocol LocaleProtocol {
+  var languageCode: Swift.String? { get }
+  var regionCode: Swift.String? { get }
+}
+extension Foundation.Locale : WebexSDK.LocaleProtocol {
+}
+public protocol ProcessInfoProtocol : AnyObject {
+  var environment: [Swift.String : Swift.String] { get }
+  func performExpiringActivity(withReason reason: Swift.String, using block: @escaping (Swift.Bool) -> Swift.Void)
+}
+extension Foundation.ProcessInfo : WebexSDK.ProcessInfoProtocol {
+}
+extension WebexSDK.ProcessInfoProtocol {
+  public var isUnitTestBuild: Swift.Bool {
+    get
+  }
+  public var isUITestBuild: Swift.Bool {
+    get
+  }
+  public var simulatorSharedDirectory: Swift.String? {
+    get
+  }
+  public var apiServiceUrl: Swift.String? {
+    get
+  }
+  public var sparkdUrl: Swift.String? {
+    get
+  }
+  public var conversationServiceUrl: Swift.String? {
+    get
+  }
+  public var wdmServiceUrl: Swift.String? {
+    get
+  }
+  public var whistlerServiceUrl: Swift.String? {
+    get
+  }
+  public var hecateServiceUrl: Swift.String? {
+    get
+  }
+  public var idbrokerBaseUrl: Swift.String? {
+    get
+  }
+}
+public struct Resource {
+  public var clusterId: Swift.String
+  public var type: WebexSDK.ResourceType
+  public var resource: Swift.String
+  public init(clusterId: Swift.String, type: WebexSDK.ResourceType, resource: Swift.String)
+}
+public enum ResourceType {
+  case Memberships
+  case Teams
+  case Spaces
+  public static func == (a: WebexSDK.ResourceType, b: WebexSDK.ResourceType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public class SparkClientProvider : UCFBridge.AppleSparkClientProvider {
+  public var useNativeHttpClient: Swift.Bool
+  public var useNativeWebSocket: Swift.Bool
+  public init(oauthClientId: Swift.String, oauthClientSecret: Swift.String, oauthAdditionalScopes: Swift.String, oauthRedirectUri: Swift.String, buildInfo: any WebexSDK.BuildInfoProtocol, device: any WebexSDK.ExtendedDeviceProtocol, fileManager: any WebexSDK.FileManagerProtocol, locale: any WebexSDK.LocaleProtocol, userDefaults: any WebexSDK.UserDefaultsProtocol, isExtension: Swift.Bool, isFedRampEmployee: Swift.Bool)
+  @objc final public let userAgent: Swift.String
+  @objc final public let oauthClientId: Swift.String
+  @objc final public let oauthClientSecret: Swift.String
+  @objc final public let oauthAdditionalScopes: Swift.String
+  @objc final public let oauthRedirectUri: Swift.String
+  @objc final public let applicationVersion: Swift.String
+  @objc final public let operatingSystemVersion: Swift.String
+  @objc final public let operatingSystemLanguage: Swift.String
+  @objc final public let platformInfo: Swift.String
+  @objc final public let databasePath: Swift.String
+  @objc final public let wdmDeviceType: Swift.String
+  @objc final public let platformEncryptionIdentifier: Swift.String
+  final public let appName: Swift.String
+  @objc final public let appType: Swift.String
+  final public let bundleId: Swift.String
+  final public let processorMaxFrequency: Swift.UInt32
+  @objc public func extraTelemetryMetaData(forMetricEventName metricEventName: Swift.String) -> Swift.String?
+  @objc final public let productName: Swift.String
+  @objc final public let isDeveloperVersion: Swift.Bool
+  @objc final public let isTablet: Swift.Bool
+  @objc final public let appleAccessGroupIdentifier: Swift.String
+  @objc public func additionalClientConfig(forConfigName configName: Swift.String) -> Swift.String?
+  @objc final public let u2cUrl: Swift.String
+  @objc deinit
+}
+public protocol UserDefaultsProtocol {
+  func object(forKey defaultName: Swift.String) -> Any?
+  func set(_ value: Any?, forKey defaultName: Swift.String)
+  func removeObject(forKey defaultName: Swift.String)
+  func string(forKey defaultName: Swift.String) -> Swift.String?
+  func array(forKey defaultName: Swift.String) -> [Any]?
+  func integer(forKey defaultName: Swift.String) -> Swift.Int
+  func float(forKey defaultName: Swift.String) -> Swift.Float
+  func double(forKey defaultName: Swift.String) -> Swift.Double
+  func bool(forKey defaultName: Swift.String) -> Swift.Bool
+  func stringSet(forKey defaultName: Swift.String) -> Swift.Set<Swift.String>?
+  func set(_ value: Swift.Int, forKey defaultName: Swift.String)
+  func set(_ value: Swift.Float, forKey defaultName: Swift.String)
+  func set(_ value: Swift.Double, forKey defaultName: Swift.String)
+  func set(_ value: Swift.Bool, forKey defaultName: Swift.String)
+  func set(_ value: Swift.Set<Swift.String>, forKey defaultName: Swift.String)
+  func register(defaults registrationDictionary: [Swift.String : Any])
+  func dictionaryRepresentation() -> [Swift.String : Any]
+  func persistentDomain(forName domainName: Swift.String) -> [Swift.String : Any]?
+  func setPersistentDomain(_ domain: [Swift.String : Any], forName domainName: Swift.String)
+  func removePersistentDomain(forName domainName: Swift.String)
+  func synchronize() -> Swift.Bool
+}
+extension Foundation.UserDefaults : WebexSDK.UserDefaultsProtocol {
+  public func stringSet(forKey defaultName: Swift.String) -> Swift.Set<Swift.String>?
+  public func set(_ value: Swift.Set<Swift.String>, forKey defaultName: Swift.String)
+}
+extension Swift.Array {
+  public subscript(safeIndex index: Swift.Int) -> Element? {
+    get
+  }
+}
+public enum Base64EncodeError : Swift.String {
+  case internalError
+  case badRequest
+  case alreadyEncoded
+  case unauthorized
+  case noError
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers open class EmailAddress {
+  open class func fromString(_ address: Swift.String?) -> WebexSDK.EmailAddress?
+  open func toString() -> Swift.String
+  public func toObjC() -> UCFBridge.CHEmailAddress
+  @objc deinit
+}
+extension WebexSDK.EmailAddress : Swift.Equatable {
+}
+public func == (lhs: WebexSDK.EmailAddress, rhs: WebexSDK.EmailAddress) -> Swift.Bool
+public protocol Logger {
+  func log(message: WebexSDK.LogMessage)
+}
+public struct LogMessage {
+  public let message: Swift.String
+  public let level: WebexSDK.LogLevel
+  public let file: Swift.String
+  public let function: Swift.String
+  public let line: Swift.UInt
+  public let description: Swift.String
+  public let timestamp: Foundation.Date
+  public let threadName: Swift.String
+}
+public enum LogLevel : Swift.UInt {
+  case no
+  case error
+  case warning
+  case info
+  case debug
+  case verbose
+  case all
+  public init?(rawValue: Swift.UInt)
+  public typealias RawValue = Swift.UInt
+  public var rawValue: Swift.UInt {
+    get
+  }
+}
+public enum ReachabilityError : Swift.Error {
+  case failedToCreateWithAddress(Darwin.sockaddr, Swift.Int32)
+  case failedToCreateWithHostname(Swift.String, Swift.Int32)
+  case unableToSetCallback(Swift.Int32)
+  case unableToSetDispatchQueue(Swift.Int32)
+  case unableToGetFlags(Swift.Int32)
+}
+@available(*, unavailable, renamed: "Notification.Name.reachabilityChanged")
+public let ReachabilityChangedNotification: Foundation.NSNotification.Name
+extension Foundation.NSNotification.Name {
+  public static let reachabilityChanged: Foundation.Notification.Name
+}
+public class Reachability {
+  public typealias NetworkReachable = (WebexSDK.Reachability) -> ()
+  public typealias NetworkUnreachable = (WebexSDK.Reachability) -> ()
+  @available(*, unavailable, renamed: "Connection")
+  public enum NetworkStatus : Swift.CustomStringConvertible {
+    case notReachable, reachableViaWiFi, reachableViaWWAN
+    public var description: Swift.String {
+      get
+    }
+    public static func == (a: WebexSDK.Reachability.NetworkStatus, b: WebexSDK.Reachability.NetworkStatus) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public enum Connection : Swift.CustomStringConvertible {
+    case unavailable, wifi, cellular
+    public var description: Swift.String {
+      get
+    }
+    @available(*, deprecated, renamed: "unavailable")
+    public static let none: WebexSDK.Reachability.Connection
+    public static func == (a: WebexSDK.Reachability.Connection, b: WebexSDK.Reachability.Connection) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var whenReachable: WebexSDK.Reachability.NetworkReachable?
+  public var whenUnreachable: WebexSDK.Reachability.NetworkUnreachable?
+  @available(*, deprecated, renamed: "allowsCellularConnection")
+  final public let reachableOnWWAN: Swift.Bool
+  public var allowsCellularConnection: Swift.Bool
+  public var notificationCenter: Foundation.NotificationCenter
+  @available(*, deprecated, renamed: "connection.description")
+  public var currentReachabilityString: Swift.String {
+    get
+  }
+  @available(*, unavailable, renamed: "connection")
+  public var currentReachabilityStatus: WebexSDK.Reachability.Connection {
+    get
+  }
+  public var connection: WebexSDK.Reachability.Connection {
+    get
+  }
+  required public init(reachabilityRef: SystemConfiguration.SCNetworkReachability, queueQoS: Dispatch.DispatchQoS = .default, targetQueue: Dispatch.DispatchQueue? = nil, notificationQueue: Dispatch.DispatchQueue? = .main)
+  convenience public init(hostname: Swift.String, queueQoS: Dispatch.DispatchQoS = .default, targetQueue: Dispatch.DispatchQueue? = nil, notificationQueue: Dispatch.DispatchQueue? = .main) throws
+  convenience public init(queueQoS: Dispatch.DispatchQoS = .default, targetQueue: Dispatch.DispatchQueue? = nil, notificationQueue: Dispatch.DispatchQueue? = .main) throws
+  @objc deinit
+}
+extension WebexSDK.Reachability {
+  public func startNotifier() throws
+  public func stopNotifier()
+  @available(*, deprecated, message: "Please use `connection != .none`")
+  public var isReachable: Swift.Bool {
+    get
+  }
+  @available(*, deprecated, message: "Please use `connection == .cellular`")
+  public var isReachableViaWWAN: Swift.Bool {
+    get
+  }
+  @available(*, deprecated, message: "Please use `connection == .wifi`")
+  public var isReachableViaWiFi: Swift.Bool {
+    get
+  }
+  public var description: Swift.String {
+    get
+  }
+}
+public enum Result<T> {
+  case success(T)
+  case failure(any Swift.Error)
+  public var data: T? {
+    get
+  }
+  public var error: (any Swift.Error)? {
+    get
+  }
+}
+extension Foundation.Timer {
+  @discardableResult
+  public class func after(_ interval: Foundation.TimeInterval, _ block: @escaping () -> Swift.Void) -> Foundation.Timer
+  @discardableResult
+  public class func every(_ interval: Foundation.TimeInterval, _ block: @escaping () -> Swift.Void) -> Foundation.Timer
+  @discardableResult
+  public class func every(_ interval: Foundation.TimeInterval, _ block: @escaping (Foundation.Timer) -> Swift.Void) -> Foundation.Timer
+  public class func new(after interval: Foundation.TimeInterval, _ block: @escaping () -> Swift.Void) -> Foundation.Timer
+  public class func new(every interval: Foundation.TimeInterval, _ block: @escaping () -> Swift.Void) -> Foundation.Timer
+  public class func new(every interval: Foundation.TimeInterval, _ block: @escaping (Foundation.Timer) -> Swift.Void) -> Foundation.Timer
+  public func start(runLoop: Foundation.RunLoop = .current, modes: Foundation.RunLoop.Mode...)
+}
+extension Swift.Double {
+  public var millisecond: Foundation.TimeInterval {
+    get
+  }
+  public var milliseconds: Foundation.TimeInterval {
+    get
+  }
+  public var ms: Foundation.TimeInterval {
+    get
+  }
+  public var second: Foundation.TimeInterval {
+    get
+  }
+  public var seconds: Foundation.TimeInterval {
+    get
+  }
+  public var minute: Foundation.TimeInterval {
+    get
+  }
+  public var minutes: Foundation.TimeInterval {
+    get
+  }
+  public var hour: Foundation.TimeInterval {
+    get
+  }
+  public var hours: Foundation.TimeInterval {
+    get
+  }
+  public var day: Foundation.TimeInterval {
+    get
+  }
+  public var days: Foundation.TimeInterval {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class UserDefault {
+  @objc deinit
+}
+public enum WebexError : Swift.Error {
+  case serviceFailed(code: Swift.Int = -7000, reason: Swift.String)
+  case unregistered
+  case requireH264
+  case interruptedByViewingH264License
+  case invalidDTMF
+  case unsupportedDTMF
+  case illegalOperation(reason: Swift.String)
+  case illegalStatus(reason: Swift.String)
+  case noAuth
+  case requireHostPinOrMeetingPassword(reason: Swift.String)
+  case failed(reason: Swift.String)
+  case invalidPassword(reason: Swift.String)
+  case captchaRequired(captcha: WebexSDK.Phone.Captcha)
+  case invalidPasswordOrHostKeyWithCaptcha(captcha: WebexSDK.Phone.Captcha)
+  case companionModeNotSupported
+}
+extension WebexSDK.WebexError : Foundation.LocalizedError {
+  public var errorDescription: Swift.String? {
+    get
+  }
+  public var captcha: WebexSDK.Phone.Captcha? {
+    get
+  }
+}
+public struct WebexEventPayload {
+  public let actorId: Swift.String?
+}
+extension WebexSDK.AccessTokenLoginResult : Swift.Equatable {}
+extension WebexSDK.AccessTokenLoginResult : Swift.Hashable {}
+extension WebexSDK.AccessTokenLoginResult : Swift.RawRepresentable {}
+extension WebexSDK.OAuthResult : Swift.Equatable {}
+extension WebexSDK.OAuthResult : Swift.Hashable {}
+extension WebexSDK.OAuthResult : Swift.RawRepresentable {}
+extension WebexSDK.TokenLoginError : Swift.Equatable {}
+extension WebexSDK.TokenLoginError : Swift.Hashable {}
+extension WebexSDK.TokenLoginError : Swift.RawRepresentable {}
+extension WebexSDK.InviteeResponse : Swift.Equatable {}
+extension WebexSDK.InviteeResponse : Swift.Hashable {}
+extension WebexSDK.InviteeResponse : Swift.RawRepresentable {}
+extension WebexSDK.ListCalendarMeetingsResult : Swift.Equatable {}
+extension WebexSDK.ListCalendarMeetingsResult : Swift.Hashable {}
+extension WebexSDK.ListCalendarMeetingsResult : Swift.RawRepresentable {}
+extension WebexSDK.GetCalendarMeetingByIdResult : Swift.Equatable {}
+extension WebexSDK.GetCalendarMeetingByIdResult : Swift.Hashable {}
+extension WebexSDK.GetCalendarMeetingByIdResult : Swift.RawRepresentable {}
+extension WebexSDK.CreateSpaceMembershipError : Swift.Equatable {}
+extension WebexSDK.CreateSpaceMembershipError : Swift.Hashable {}
+extension WebexSDK.CreateSpaceMembershipError : Swift.RawRepresentable {}
+extension WebexSDK.GetMembershipByIdError : Swift.Equatable {}
+extension WebexSDK.GetMembershipByIdError : Swift.Hashable {}
+extension WebexSDK.GetMembershipByIdError : Swift.RawRepresentable {}
+extension WebexSDK.ListMembershipReadStatusError : Swift.Equatable {}
+extension WebexSDK.ListMembershipReadStatusError : Swift.Hashable {}
+extension WebexSDK.ListMembershipReadStatusError : Swift.RawRepresentable {}
+extension WebexSDK.ListMembershipsError : Swift.Equatable {}
+extension WebexSDK.ListMembershipsError : Swift.Hashable {}
+extension WebexSDK.ListMembershipsError : Swift.RawRepresentable {}
+extension WebexSDK.MembershipDeleteError : Swift.Equatable {}
+extension WebexSDK.MembershipDeleteError : Swift.Hashable {}
+extension WebexSDK.MembershipDeleteError : Swift.RawRepresentable {}
+extension WebexSDK.MembershipUpdateError : Swift.Equatable {}
+extension WebexSDK.MembershipUpdateError : Swift.Hashable {}
+extension WebexSDK.MembershipUpdateError : Swift.RawRepresentable {}
+extension WebexSDK.DeleteMessageError : Swift.Equatable {}
+extension WebexSDK.DeleteMessageError : Swift.Hashable {}
+extension WebexSDK.DeleteMessageError : Swift.RawRepresentable {}
+extension WebexSDK.DownloadFileResult : Swift.Equatable {}
+extension WebexSDK.DownloadFileResult : Swift.Hashable {}
+extension WebexSDK.DownloadFileResult : Swift.RawRepresentable {}
+extension WebexSDK.DownloadThumbnailResult : Swift.Equatable {}
+extension WebexSDK.DownloadThumbnailResult : Swift.Hashable {}
+extension WebexSDK.DownloadThumbnailResult : Swift.RawRepresentable {}
+extension WebexSDK.GetMessageError : Swift.Equatable {}
+extension WebexSDK.GetMessageError : Swift.Hashable {}
+extension WebexSDK.GetMessageError : Swift.RawRepresentable {}
+extension WebexSDK.ListMessagesError : Swift.Equatable {}
+extension WebexSDK.ListMessagesError : Swift.Hashable {}
+extension WebexSDK.ListMessagesError : Swift.RawRepresentable {}
+extension WebexSDK.MarkMessageReadResult : Swift.Equatable {}
+extension WebexSDK.MarkMessageReadResult : Swift.Hashable {}
+extension WebexSDK.MessageValidationResult : Swift.Equatable {}
+extension WebexSDK.MessageValidationResult : Swift.Hashable {}
+extension WebexSDK.MessageValidationResult : Swift.RawRepresentable {}
+extension WebexSDK.PostMessageError : Swift.Equatable {}
+extension WebexSDK.PostMessageError : Swift.Hashable {}
+extension WebexSDK.PostMessageError : Swift.RawRepresentable {}
+extension WebexSDK.CreatePersonError : Swift.Equatable {}
+extension WebexSDK.CreatePersonError : Swift.Hashable {}
+extension WebexSDK.CreatePersonError : Swift.RawRepresentable {}
+extension WebexSDK.DeletePersonError : Swift.Equatable {}
+extension WebexSDK.DeletePersonError : Swift.Hashable {}
+extension WebexSDK.DeletePersonError : Swift.RawRepresentable {}
+extension WebexSDK.ListPersonsError : Swift.Equatable {}
+extension WebexSDK.ListPersonsError : Swift.Hashable {}
+extension WebexSDK.ListPersonsError : Swift.RawRepresentable {}
+extension WebexSDK.PersonRole : Swift.Equatable {}
+extension WebexSDK.PersonRole : Swift.Hashable {}
+extension WebexSDK.PersonRole : Swift.RawRepresentable {}
+extension WebexSDK.PersonClient.PersonGetError : Swift.Equatable {}
+extension WebexSDK.PersonClient.PersonGetError : Swift.Hashable {}
+extension WebexSDK.PersonClient.PersonGetError : Swift.RawRepresentable {}
+extension WebexSDK.PresenceStatus : Swift.Equatable {}
+extension WebexSDK.PresenceStatus : Swift.Hashable {}
+extension WebexSDK.UpdatePersonError : Swift.Equatable {}
+extension WebexSDK.UpdatePersonError : Swift.Hashable {}
+extension WebexSDK.UpdatePersonError : Swift.RawRepresentable {}
+extension WebexSDK.AddVirtualBackgroundError : Swift.Equatable {}
+extension WebexSDK.AddVirtualBackgroundError : Swift.Hashable {}
+extension WebexSDK.AddVirtualBackgroundError : Swift.RawRepresentable {}
+extension WebexSDK.ApplyVirtualBackgroundError : Swift.Equatable {}
+extension WebexSDK.ApplyVirtualBackgroundError : Swift.Hashable {}
+extension WebexSDK.ApplyVirtualBackgroundError : Swift.RawRepresentable {}
+extension WebexSDK.BreakoutError : Swift.Equatable {}
+extension WebexSDK.BreakoutError : Swift.Hashable {}
+extension WebexSDK.BreakoutError : Swift.RawRepresentable {}
+extension WebexSDK.Call.Direction : Swift.Equatable {}
+extension WebexSDK.Call.Direction : Swift.Hashable {}
+extension WebexSDK.Call.RingerType : Swift.Equatable {}
+extension WebexSDK.Call.RingerType : Swift.Hashable {}
+extension WebexSDK.Call.iOSBroadcastingEvent : Swift.Equatable {}
+extension WebexSDK.Call.iOSBroadcastingEvent : Swift.Hashable {}
+extension WebexSDK.Call.Capabilities : Swift.Equatable {}
+extension WebexSDK.Call.Capabilities : Swift.Hashable {}
+extension WebexSDK.Call.WaitReason : Swift.Equatable {}
+extension WebexSDK.Call.WaitReason : Swift.Hashable {}
+extension WebexSDK.Call.VideoRenderMode : Swift.Equatable {}
+extension WebexSDK.Call.VideoRenderMode : Swift.Hashable {}
+extension WebexSDK.Call.TorchMode : Swift.Equatable {}
+extension WebexSDK.Call.TorchMode : Swift.Hashable {}
+extension WebexSDK.Call.FlashMode : Swift.Equatable {}
+extension WebexSDK.Call.FlashMode : Swift.Hashable {}
+extension WebexSDK.Call.AudioOutputMode : Swift.Equatable {}
+extension WebexSDK.Call.AudioOutputMode : Swift.Hashable {}
+extension WebexSDK.NotificationCallType : Swift.Equatable {}
+extension WebexSDK.NotificationCallType : Swift.Hashable {}
+extension WebexSDK.CallAssociationType : Swift.Equatable {}
+extension WebexSDK.CallAssociationType : Swift.Hashable {}
+extension WebexSDK.CompanionMode : Swift.Equatable {}
+extension WebexSDK.CompanionMode : Swift.Hashable {}
+extension WebexSDK.InviteParticipantError : Swift.Equatable {}
+extension WebexSDK.InviteParticipantError : Swift.Hashable {}
+extension WebexSDK.MakeHostError : Swift.Equatable {}
+extension WebexSDK.MakeHostError : Swift.Hashable {}
+extension WebexSDK.MediaOption.CompositedVideoLayout : Swift.Equatable {}
+extension WebexSDK.MediaOption.CompositedVideoLayout : Swift.Hashable {}
+extension WebexSDK.MediaStreamChangeEventType : Swift.Equatable {}
+extension WebexSDK.MediaStreamChangeEventType : Swift.Hashable {}
+extension WebexSDK.MediaStreamQuality : Swift.Equatable {}
+extension WebexSDK.MediaStreamQuality : Swift.Hashable {}
+extension WebexSDK.MediaStreamType : Swift.Equatable {}
+extension WebexSDK.MediaStreamType : Swift.Hashable {}
+extension WebexSDK.MediaQualityInfo : Swift.Equatable {}
+extension WebexSDK.MediaQualityInfo : Swift.Hashable {}
+extension WebexSDK.ReclaimHostError : Swift.Equatable {}
+extension WebexSDK.ReclaimHostError : Swift.Hashable {}
+extension WebexSDK.RecordAudioDumpResult : Swift.Equatable {}
+extension WebexSDK.RecordAudioDumpResult : Swift.Hashable {}
+extension WebexSDK.RecordAudioDumpResult : Swift.RawRepresentable {}
+extension WebexSDK.ShareOptimizeType : Swift.Equatable {}
+extension WebexSDK.ShareOptimizeType : Swift.Hashable {}
+extension WebexSDK.SpokenLanguageSelectionError : Swift.Equatable {}
+extension WebexSDK.SpokenLanguageSelectionError : Swift.Hashable {}
+extension WebexSDK.SwitchToAudioVideoCallResult : Swift.Equatable {}
+extension WebexSDK.SwitchToAudioVideoCallResult : Swift.Hashable {}
+extension WebexSDK.SwitchToAudioVideoCallResult : Swift.RawRepresentable {}
+extension WebexSDK.TranslationLanguageSelectionError : Swift.Equatable {}
+extension WebexSDK.TranslationLanguageSelectionError : Swift.Hashable {}
+extension WebexSDK.CallError : Swift.Equatable {}
+extension WebexSDK.CallError : Swift.Hashable {}
+extension WebexSDK.CallError : Swift.RawRepresentable {}
+extension WebexSDK.CallMembership.State : Swift.Equatable {}
+extension WebexSDK.CallMembership.State : Swift.Hashable {}
+extension WebexSDK.CallMembership.State : Swift.RawRepresentable {}
+extension WebexSDK.CallMembership.DeviceType : Swift.Equatable {}
+extension WebexSDK.CallMembership.DeviceType : Swift.Hashable {}
+extension WebexSDK.CallMembership.DeviceType : Swift.RawRepresentable {}
+extension WebexSDK.CallStatus : Swift.Equatable {}
+extension WebexSDK.CallStatus : Swift.Hashable {}
+extension WebexSDK.DirectTransferError : Swift.Equatable {}
+extension WebexSDK.DirectTransferError : Swift.Hashable {}
+extension WebexSDK.DirectTransferError : Swift.RawRepresentable {}
+extension WebexSDK.FetchVirtualBackgroundError : Swift.Equatable {}
+extension WebexSDK.FetchVirtualBackgroundError : Swift.Hashable {}
+extension WebexSDK.FetchVirtualBackgroundError : Swift.RawRepresentable {}
+extension WebexSDK.LetInError : Swift.Equatable {}
+extension WebexSDK.LetInError : Swift.Hashable {}
+extension WebexSDK.LetInError : Swift.RawRepresentable {}
+extension WebexSDK.Phone.FacingMode : Swift.Equatable {}
+extension WebexSDK.Phone.FacingMode : Swift.Hashable {}
+extension WebexSDK.Phone.DefaultBandwidth : Swift.Equatable {}
+extension WebexSDK.Phone.DefaultBandwidth : Swift.Hashable {}
+extension WebexSDK.Phone.DefaultBandwidth : Swift.RawRepresentable {}
+extension WebexSDK.Phone.AudioBNRMode : Swift.Equatable {}
+extension WebexSDK.Phone.AudioBNRMode : Swift.Hashable {}
+extension WebexSDK.Phone.AudioBNRMode : Swift.RawRepresentable {}
+extension WebexSDK.Phone.VideoStreamMode : Swift.Equatable {}
+extension WebexSDK.Phone.VideoStreamMode : Swift.Hashable {}
+extension WebexSDK.Phone.CallingType : Swift.Equatable {}
+extension WebexSDK.Phone.CallingType : Swift.Hashable {}
+extension WebexSDK.Phone.ServiceUrlType : Swift.Equatable {}
+extension WebexSDK.Phone.ServiceUrlType : Swift.Hashable {}
+extension WebexSDK.Phone.VirtualBackgroundType : Swift.Equatable {}
+extension WebexSDK.Phone.VirtualBackgroundType : Swift.Hashable {}
+extension WebexSDK.Phone.VirtualBackgroundMode : Swift.Equatable {}
+extension WebexSDK.Phone.VirtualBackgroundMode : Swift.Hashable {}
+extension WebexSDK.PhoneConnectionError : Swift.Equatable {}
+extension WebexSDK.PhoneConnectionError : Swift.Hashable {}
+extension WebexSDK.PhoneConnectionError : Swift.RawRepresentable {}
+extension WebexSDK.PhoneServiceRegistrationFailureReason : Swift.Equatable {}
+extension WebexSDK.PhoneServiceRegistrationFailureReason : Swift.Hashable {}
+extension WebexSDK.ProcessNotificationError : Swift.Equatable {}
+extension WebexSDK.ProcessNotificationError : Swift.Hashable {}
+extension WebexSDK.ProcessNotificationError : Swift.RawRepresentable {}
+extension WebexSDK.ReceivingNoiseRemovalEnableResult : Swift.Equatable {}
+extension WebexSDK.ReceivingNoiseRemovalEnableResult : Swift.Hashable {}
+extension WebexSDK.ReceivingNoiseRemovalEnableResult : Swift.RawRepresentable {}
+extension WebexSDK.RemoveVirtualBackgroundError : Swift.Equatable {}
+extension WebexSDK.RemoveVirtualBackgroundError : Swift.Hashable {}
+extension WebexSDK.RemoveVirtualBackgroundError : Swift.RawRepresentable {}
+extension WebexSDK.SetCompositedLayoutError : Swift.Equatable {}
+extension WebexSDK.SetCompositedLayoutError : Swift.Hashable {}
+extension WebexSDK.SetCompositedLayoutError : Swift.RawRepresentable {}
+extension WebexSDK.UCLoginFailureReason : Swift.Equatable {}
+extension WebexSDK.UCLoginFailureReason : Swift.Hashable {}
+extension WebexSDK.UCLoginServerConnectionStatus : Swift.Equatable {}
+extension WebexSDK.UCLoginServerConnectionStatus : Swift.Hashable {}
+extension WebexSDK.UCSSOFailureReason : Swift.Equatable {}
+extension WebexSDK.UCSSOFailureReason : Swift.Hashable {}
+extension WebexSDK.UpdateSystemCameraResult : Swift.Equatable {}
+extension WebexSDK.UpdateSystemCameraResult : Swift.Hashable {}
+extension WebexSDK.UpdateSystemCameraResult : Swift.RawRepresentable {}
+extension WebexSDK.DeleteSpaceError : Swift.Equatable {}
+extension WebexSDK.DeleteSpaceError : Swift.Hashable {}
+extension WebexSDK.DeleteSpaceError : Swift.RawRepresentable {}
+extension WebexSDK.ListSpaceReadStatusError : Swift.Equatable {}
+extension WebexSDK.ListSpaceReadStatusError : Swift.Hashable {}
+extension WebexSDK.ListSpaceReadStatusError : Swift.RawRepresentable {}
+extension WebexSDK.SpaceType : Swift.Equatable {}
+extension WebexSDK.SpaceType : Swift.Hashable {}
+extension WebexSDK.SpaceType : Swift.RawRepresentable {}
+extension WebexSDK.SpaceSortType : Swift.Equatable {}
+extension WebexSDK.SpaceSortType : Swift.Hashable {}
+extension WebexSDK.SpaceSortType : Swift.RawRepresentable {}
+extension WebexSDK.SpaceClient.SpaceClientError : Swift.Equatable {}
+extension WebexSDK.SpaceClient.SpaceClientError : Swift.Hashable {}
+extension WebexSDK.SpaceClient.SpaceClientError : Swift.RawRepresentable {}
+extension WebexSDK.UpdateSpaceTitleError : Swift.Equatable {}
+extension WebexSDK.UpdateSpaceTitleError : Swift.Hashable {}
+extension WebexSDK.UpdateSpaceTitleError : Swift.RawRepresentable {}
+extension WebexSDK.TeamClient.TeamArchiveError : Swift.Equatable {}
+extension WebexSDK.TeamClient.TeamArchiveError : Swift.Hashable {}
+extension WebexSDK.TeamClient.TeamArchiveError : Swift.RawRepresentable {}
+extension WebexSDK.TeamClient.TeamUpdateError : Swift.Equatable {}
+extension WebexSDK.TeamClient.TeamUpdateError : Swift.Hashable {}
+extension WebexSDK.TeamClient.TeamUpdateError : Swift.RawRepresentable {}
+extension WebexSDK.TeamCreateError : Swift.Equatable {}
+extension WebexSDK.TeamCreateError : Swift.Hashable {}
+extension WebexSDK.TeamCreateError : Swift.RawRepresentable {}
+extension WebexSDK.TeamGetError : Swift.Equatable {}
+extension WebexSDK.TeamGetError : Swift.Hashable {}
+extension WebexSDK.TeamGetError : Swift.RawRepresentable {}
+extension WebexSDK.TeamListError : Swift.Equatable {}
+extension WebexSDK.TeamListError : Swift.Hashable {}
+extension WebexSDK.TeamListError : Swift.RawRepresentable {}
+extension WebexSDK.CreateTeamMembershipError : Swift.Equatable {}
+extension WebexSDK.CreateTeamMembershipError : Swift.Hashable {}
+extension WebexSDK.CreateTeamMembershipError : Swift.RawRepresentable {}
+extension WebexSDK.DeleteTeamMembershipError : Swift.Equatable {}
+extension WebexSDK.DeleteTeamMembershipError : Swift.Hashable {}
+extension WebexSDK.DeleteTeamMembershipError : Swift.RawRepresentable {}
+extension WebexSDK.GetTeamMembershipError : Swift.Equatable {}
+extension WebexSDK.GetTeamMembershipError : Swift.Hashable {}
+extension WebexSDK.GetTeamMembershipError : Swift.RawRepresentable {}
+extension WebexSDK.ListTeamMembershipError : Swift.Equatable {}
+extension WebexSDK.ListTeamMembershipError : Swift.Hashable {}
+extension WebexSDK.ListTeamMembershipError : Swift.RawRepresentable {}
+extension WebexSDK.UpdateTeamMembershipError : Swift.Equatable {}
+extension WebexSDK.UpdateTeamMembershipError : Swift.Hashable {}
+extension WebexSDK.UpdateTeamMembershipError : Swift.RawRepresentable {}
+extension WebexSDK.CreateWebhookError : Swift.Equatable {}
+extension WebexSDK.CreateWebhookError : Swift.Hashable {}
+extension WebexSDK.CreateWebhookError : Swift.RawRepresentable {}
+extension WebexSDK.DeleteWebhookError : Swift.Equatable {}
+extension WebexSDK.DeleteWebhookError : Swift.Hashable {}
+extension WebexSDK.DeleteWebhookError : Swift.RawRepresentable {}
+extension WebexSDK.GetWebhookError : Swift.Equatable {}
+extension WebexSDK.GetWebhookError : Swift.Hashable {}
+extension WebexSDK.GetWebhookError : Swift.RawRepresentable {}
+extension WebexSDK.ListWebhooksError : Swift.Equatable {}
+extension WebexSDK.ListWebhooksError : Swift.Hashable {}
+extension WebexSDK.ListWebhooksError : Swift.RawRepresentable {}
+extension WebexSDK.UpdateWebhookError : Swift.Equatable {}
+extension WebexSDK.UpdateWebhookError : Swift.Hashable {}
+extension WebexSDK.UpdateWebhookError : Swift.RawRepresentable {}
+extension WebexSDK.ResourceType : Swift.Equatable {}
+extension WebexSDK.ResourceType : Swift.Hashable {}
+extension WebexSDK.Base64EncodeError : Swift.Equatable {}
+extension WebexSDK.Base64EncodeError : Swift.Hashable {}
+extension WebexSDK.Base64EncodeError : Swift.RawRepresentable {}
+extension WebexSDK.LogLevel : Swift.Equatable {}
+extension WebexSDK.LogLevel : Swift.Hashable {}
+extension WebexSDK.LogLevel : Swift.RawRepresentable {}
+@available(*, unavailable, renamed: "Connection")
+extension WebexSDK.Reachability.NetworkStatus : Swift.Equatable {}
+@available(*, unavailable, renamed: "Connection")
+extension WebexSDK.Reachability.NetworkStatus : Swift.Hashable {}
+extension WebexSDK.Reachability.Connection : Swift.Equatable {}
+extension WebexSDK.Reachability.Connection : Swift.Hashable {}
